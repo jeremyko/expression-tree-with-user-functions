@@ -1,0 +1,2 @@
+rm -f *.o
+g++ -lgtest -lgtest_main -lpthread -std=c++0x -Wall -o expression_test algo_test.cpp token_parser.cpp user_functions.cpp expression_tree.cpp testCases.cpp
