@@ -108,7 +108,8 @@ struct expression_node
     expression_node* rightSiblingForMore2funcArgs;
     //dynamic array for a function with more than 2 arguments.
     //if function has 4 args, left has arg1, right has arg2,
-    //siblingForMore2funcArgs[0] has arg3 and siblingForMore2funcArgs[1] has arg4.
+    //right->siblingForMore2funcArgs has arg3
+    //and right->siblingForMore2funcArgs->siblingForMore2funcArgs has arg4.
 
     expression_node *left;
     expression_node *right;
