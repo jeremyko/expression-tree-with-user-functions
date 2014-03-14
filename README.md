@@ -1,6 +1,6 @@
-# c++ expression tree library
+#c++ expression tree library
 
-## usage 
+#Usage 
  
     ExpressionTree expTree;
     expression_node* pExpressionRslt;
@@ -51,3 +51,6 @@
     cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
     EXPECT_STREQ("12abXYZ", pExpressionRslt->strVal);
  
+#LICENSE
+
+This projected is licensed under the terms of the BSD license.
