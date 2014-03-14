@@ -4,7 +4,7 @@
 #include <string.h>
 
 const char* NodeTypeDesc[] = {
-    "NODE_UNKNOWN",    
+    "NODE_UNKNOWN",
     "NODE_LITERAL",
     "NODE_NUMBER",
     "NODE_COMPARE_OPERATOR",
@@ -31,7 +31,7 @@ const char* DetailedTypeDesc[] = {
     "RIGHT_PARENTHESIS",
     "PAUSE",
     "USER_FUNCTIION",
-    "LITERAL",        
+    "LITERAL",
     "NUMBER"
 };
 
@@ -54,38 +54,38 @@ type_struct_OpPriority OpPriorityTable[MAX_OP_PRIORITY_TABLE_CNT] =
     { COMPARE_GREATER_THAN,     2 },    // '>'
     { COMPARE_GREATER_EQUALS,   2 },    // '>='
     { COMPARE_LESS_THAN,        2 },    // '<'
-    { COMPARE_LESS_EQUALS,      2 },    // '<='    
+    { COMPARE_LESS_EQUALS,      2 },    // '<='
 
     { OPERATOR_PLUS,            3 },    // +
-    { OPERATOR_MINUS,           3 },    // -   
+    { OPERATOR_MINUS,           3 },    // -
     { OPERATOR_TIMES,           4 },    // *
-    { OPERATOR_DEVIDE,          4 }     // /     
+    { OPERATOR_DEVIDE,          4 }     // /
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 ExpressionTree::ExpressionTree()
 {
     memStatus = 0;
-    root_node = NULL;        
+    root_node = NULL;
     nDepthOfTree = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 ExpressionTree::~ExpressionTree()
-{   
-    DeleteExpressionTree(root_node);    
+{
+    DeleteExpressionTree(root_node);
     cout << "memStatus: " << memStatus << "\n";
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 bool ExpressionTree::IsUserFunction(ItemTokenInfo* pNodeInfo)
-{    
-    if (pNodeInfo->nType == NODE_USER_FUNCTIION)    
-    {        
+{
+    if (pNodeInfo->nType == NODE_USER_FUNCTIION)
+    {
         return true;
     }
-        
+
     return false;
 }
 
@@ -94,9 +94,9 @@ bool ExpressionTree::IsUserFunction(ItemTokenInfo* pNodeInfo)
 bool ExpressionTree::IsOperator(ItemTokenInfo* pNodeInfo)
 {
     if (pNodeInfo->nType == NODE_COMPARE_OPERATOR || pNodeInfo->nType == NODE_CALCULATE_OPERATOR)
-    {        
+    {
         return true;
-    }    
+    }
 
     return false;
 }
@@ -109,10 +109,10 @@ bool ExpressionTree::IsOperand(ItemTokenInfo* pNodeInfo)
         pNodeInfo->nDetailedType != RIGHT_PARENTHESIS &&
         pNodeInfo->nDetailedType != COMMA
         )
-    {        
+    {
         return true;
     }
-    
+
     return false;
 }
 
@@ -131,7 +131,7 @@ int ExpressionTree::GetOperatortPriority(ItemTokenInfo* pNodeInfo)
 
 ///////////////////////////////////////////////////////////////////////////////
 int ExpressionTree::GetOperatorPrecedence(ItemTokenInfo* pNodeInfo1, ItemTokenInfo* pNodeInfo2)
-{    
+{
     int nPriority1 = 0;
     int nPriority2 = 0;
 
@@ -153,9 +153,9 @@ int ExpressionTree::GetOperatorPrecedence(ItemTokenInfo* pNodeInfo1, ItemTokenIn
 
 ///////////////////////////////////////////////////////////////////////////////
 bool ExpressionTree::SetInfixExpression(const char* inFix)
-{   
+{
     //vecPostFix
-    cout << "Infix:" << inFix << "\n";        
+    cout << "Infix:" << inFix << "\n";
     vector<ItemTokenInfo>().swap(vecPostfixResult);
     //vecPostfixResult.shrink_to_fit();
 
@@ -163,7 +163,7 @@ bool ExpressionTree::SetInfixExpression(const char* inFix)
     parser.PutExpression((char*)inFix);
 
     stack<ItemTokenInfo> opStack;
-    string postFixString = "";    
+    string postFixString = "";
     bool bErrorOccurred = false;
 
     while (1)
@@ -185,59 +185,59 @@ bool ExpressionTree::SetInfixExpression(const char* inFix)
         cout << __LINE__ << ": token.nLength=" << token.nLength  << " token.nType=" << token.nType
              << " token.strTokenValue= " << token.strValue  <<  "\n";
         #endif
-        
+
         if (IsUserFunction(&token))
         {
-            opStack.push(token); //no precedence between functions 
+            opStack.push(token); //no precedence between functions
         }
         else if (IsOperand(&token))
         {
             postFixString += " ";
             postFixString += token.strValue;
-            vecPostfixResult.push_back(token);            
+            vecPostfixResult.push_back(token);
         }
         else if (IsOperator(&token))
         {
             while ( !opStack.empty() &&
-                     LEFT_PARENTHESIS != opStack.top().nDetailedType && 
-                     GetOperatorPrecedence(&opStack.top(), &token) <= 0 
-                  )
-            {                
-                postFixString += " ";
-                postFixString += opStack.top().strValue;
-                vecPostfixResult.push_back(opStack.top());
-                opStack.pop();                
-            }
-            opStack.push(token);            
-        }
-        else if (COMMA == token.nDetailedType && token.bThisTokenBelongsToTheUserFunctions ) // SumInt(1+1, 2)
-        {
-            while (!opStack.empty() &&
-                    LEFT_PARENTHESIS != opStack.top().nDetailedType                     
+                     LEFT_PARENTHESIS != opStack.top().nDetailedType &&
+                     GetOperatorPrecedence(&opStack.top(), &token) <= 0
                   )
             {
                 postFixString += " ";
                 postFixString += opStack.top().strValue;
                 vecPostfixResult.push_back(opStack.top());
                 opStack.pop();
-            }           
-        }
-        else if (LEFT_PARENTHESIS == token.nDetailedType)
-        {            
+            }
             opStack.push(token);
         }
-        else if (RIGHT_PARENTHESIS == token.nDetailedType) 
+        else if (COMMA == token.nDetailedType && token.bThisTokenBelongsToTheUserFunctions ) // SumInt(1+1, 2)
+        {
+            while (!opStack.empty() &&
+                    LEFT_PARENTHESIS != opStack.top().nDetailedType
+                  )
+            {
+                postFixString += " ";
+                postFixString += opStack.top().strValue;
+                vecPostfixResult.push_back(opStack.top());
+                opStack.pop();
+            }
+        }
+        else if (LEFT_PARENTHESIS == token.nDetailedType)
+        {
+            opStack.push(token);
+        }
+        else if (RIGHT_PARENTHESIS == token.nDetailedType)
         {
             //pop till starting '('
             while (!opStack.empty())
-            {                
+            {
                 if (LEFT_PARENTHESIS == opStack.top().nDetailedType)
                 {
                     if (token.bThisTokenBelongsToTheUserFunctions)
                     {
-                        //pop till starting function name 
-                        opStack.pop(); 
-                        
+                        //pop till starting function name
+                        opStack.pop();
+
                         if (opStack.top().nDetailedType == LEFT_PARENTHESIS)
                         {
                             // (SumInt(1,1))
@@ -250,19 +250,19 @@ bool ExpressionTree::SetInfixExpression(const char* inFix)
                             vecPostfixResult.push_back(opStack.top());
                             opStack.pop();
                         }
-                        
-                        break; 
+
+                        break;
                     }
                     else
                     {
-                        opStack.pop();                         
-                        break; 
-                    }                    
+                        opStack.pop();
+                        break;
+                    }
                 }
                 postFixString += " ";
                 postFixString += opStack.top().strValue;
                 vecPostfixResult.push_back(opStack.top());
-                                
+
                 opStack.pop();
             }
         } //RIGHT_PARENTHESIS
@@ -280,19 +280,19 @@ bool ExpressionTree::SetInfixExpression(const char* inFix)
 
         vecPostfixResult.push_back(opStack.top());
 
-        opStack.pop();        
+        opStack.pop();
     }
 
     cout << "Postfix is: " << postFixString << endl;
-    
-    return BuildExpressionTree();    
+
+    return BuildExpressionTree();
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 expression_node* ExpressionTree::CreateTreeNode()
 {
-    expression_node* node = new expression_node;   
+    expression_node* node = new expression_node;
     treeNodeMemRepository.push(node);
     ++memStatus;
     return node;
@@ -300,29 +300,29 @@ expression_node* ExpressionTree::CreateTreeNode()
 
 ///////////////////////////////////////////////////////////////////////////////
 bool ExpressionTree::CheckCompareError(expression_node* pOpRsltLeft, expression_node* pOpRsltRight)
-{       
+{
     if (pOpRsltLeft->nType == pOpRsltRight->nType )
     {
         return true;
-    }        
+    }
 
     if (pOpRsltLeft->nType == NODE_USER_FUNCTIION && pOpRsltRight->nType == NODE_USER_FUNCTIION)
     {
         //both user function
         if (pOpRsltLeft->userFuncInfo.nReturnType != pOpRsltRight->userFuncInfo.nReturnType)
-        {            
+        {
             return false;
         }
-    }    
+    }
     else if (pOpRsltLeft->nType != NODE_USER_FUNCTIION && pOpRsltRight->nType != NODE_USER_FUNCTIION)
     {
         //cout << "*** Error data type is different!! ***\n";
         //cout << "- Left: nType=" << NodeTypeDesc[pOpRsltLeft->nType] << " / nDetailedType=" << DetailedTypeDesc[pOpRsltLeft->nDetailedType] << "\n";
-        //cout << "- Right:nType=" << NodeTypeDesc[pOpRsltRight->nType] << " / nDetailedType=" << DetailedTypeDesc[pOpRsltRight->nDetailedType] << "\n";        
+        //cout << "- Right:nType=" << NodeTypeDesc[pOpRsltRight->nType] << " / nDetailedType=" << DetailedTypeDesc[pOpRsltRight->nDetailedType] << "\n";
         return false;
     }
     else if (pOpRsltLeft->nType == NODE_USER_FUNCTIION)
-    {        
+    {
         bool bError = true;
         if (pOpRsltLeft->userFuncInfo.nReturnType == FUNC_RTN_STR && pOpRsltRight->nType == NODE_LITERAL)
         {
@@ -336,12 +336,12 @@ bool ExpressionTree::CheckCompareError(expression_node* pOpRsltLeft, expression_
         {
             //cout << "*** Error data type is different!! ***\n";
             //cout << "- Left: nType=" << NodeTypeDesc[pOpRsltLeft->nType] << " / nDetailedType=" << DetailedTypeDesc[pOpRsltLeft->nDetailedType] << "\n";
-            //cout << "- Right:nType=" << NodeTypeDesc[pOpRsltRight->nType] << " / nDetailedType=" << DetailedTypeDesc[pOpRsltRight->nDetailedType] << "\n";            
+            //cout << "- Right:nType=" << NodeTypeDesc[pOpRsltRight->nType] << " / nDetailedType=" << DetailedTypeDesc[pOpRsltRight->nDetailedType] << "\n";
             return false;
         }
     }
     else if (pOpRsltRight->nType == NODE_USER_FUNCTIION)
-    {        
+    {
         bool bError = true;
         if (pOpRsltRight->userFuncInfo.nReturnType == FUNC_RTN_STR && pOpRsltLeft->nType == NODE_LITERAL)
         {
@@ -355,7 +355,7 @@ bool ExpressionTree::CheckCompareError(expression_node* pOpRsltLeft, expression_
         {
             //cout << "*** Error data type is different!! ***\n";
             //cout << "- Left: nType=" << NodeTypeDesc[pOpRsltLeft->nType] << " / nDetailedType=" << DetailedTypeDesc[pOpRsltLeft->nDetailedType] << "\n";
-            //cout << "- Right:nType=" << NodeTypeDesc[pOpRsltRight->nType] << " / nDetailedType=" << DetailedTypeDesc[pOpRsltRight->nDetailedType] << "\n";            
+            //cout << "- Right:nType=" << NodeTypeDesc[pOpRsltRight->nType] << " / nDetailedType=" << DetailedTypeDesc[pOpRsltRight->nDetailedType] << "\n";
             return false;
         }
     }
@@ -364,8 +364,8 @@ bool ExpressionTree::CheckCompareError(expression_node* pOpRsltLeft, expression_
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ExpressionTree::EvaluateStringCondition(   
-    expression_node *root, 
+void ExpressionTree::EvaluateStringCondition(
+    expression_node *root,
     expression_node* pRsltLeft,
     expression_node* pRsltRight    )
 {
@@ -415,13 +415,13 @@ void ExpressionTree::EvaluateStringCondition(
     }
 
     if (root->nDetailedType == OPERATOR_PLUS)
-    {        
+    {
         root->opReslut = true;
-    }     
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ExpressionTree::EvaluateNumericCondition(  
+void ExpressionTree::EvaluateNumericCondition(
     expression_node *root,
     expression_node* pRsltLeft,
     expression_node* pRsltRight  )
@@ -436,7 +436,7 @@ void ExpressionTree::EvaluateNumericCondition(
         else if (pRsltLeft->nDetailedType == NUMBER_FLOAT && pRsltRight->nDetailedType == NUMBER_FLOAT)
         {
             root->variable.nFloatValue = pRsltLeft->variable.nFloatValue + pRsltRight->variable.nFloatValue;
-        }        
+        }
         else if (pRsltLeft->nDetailedType == NUMBER_FLOAT && pRsltRight->nDetailedType == NUMBER_LONG)
         {
             root->variable.nFloatValue = pRsltLeft->variable.nFloatValue + pRsltRight->variable.nLongValue;
@@ -445,7 +445,7 @@ void ExpressionTree::EvaluateNumericCondition(
         {
             root->variable.nFloatValue = pRsltLeft->variable.nLongValue + pRsltRight->variable.nFloatValue;
         }
-        
+
         break;
     case OPERATOR_MINUS:
         if (pRsltLeft->nDetailedType == NUMBER_LONG && pRsltRight->nDetailedType == NUMBER_LONG)
@@ -463,8 +463,8 @@ void ExpressionTree::EvaluateNumericCondition(
         else if (pRsltLeft->nDetailedType == NUMBER_LONG && pRsltRight->nDetailedType == NUMBER_FLOAT)
         {
             root->variable.nFloatValue = pRsltLeft->variable.nLongValue - pRsltRight->variable.nFloatValue;
-        }      
-        
+        }
+
         break;
 
     case OPERATOR_TIMES:
@@ -484,7 +484,7 @@ void ExpressionTree::EvaluateNumericCondition(
         {
             root->variable.nFloatValue = pRsltLeft->variable.nLongValue * pRsltRight->variable.nFloatValue;
         }
-        
+
         break;
 
     case OPERATOR_DEVIDE:
@@ -503,8 +503,8 @@ void ExpressionTree::EvaluateNumericCondition(
         else if (pRsltLeft->nDetailedType == NUMBER_LONG && pRsltRight->nDetailedType == NUMBER_FLOAT)
         {
             root->variable.nFloatValue = pRsltLeft->variable.nLongValue / pRsltRight->variable.nFloatValue;
-        }    
-        
+        }
+
         break;
 
     case COMPARE_EQUALS:
@@ -528,7 +528,7 @@ void ExpressionTree::EvaluateNumericCondition(
             if (pRsltLeft->variable.nLongValue == pRsltRight->variable.nFloatValue)  { root->opReslut = true; }
             else { root->opReslut = false; }
         }
-        
+
         break;
 
     case COMPARE_NOT_EQUALS:
@@ -655,14 +655,14 @@ void ExpressionTree::EvaluateNumericCondition(
         break;
     }
 
-    if (root->nDetailedType == OPERATOR_PLUS || 
+    if (root->nDetailedType == OPERATOR_PLUS ||
         root->nDetailedType == OPERATOR_MINUS ||
         root->nDetailedType == OPERATOR_TIMES ||
         root->nDetailedType == OPERATOR_DEVIDE
        )
-    {        
+    {
         root->opReslut = true;
-    }    
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -672,17 +672,17 @@ void ExpressionTree::EvaluateLogic(expression_node *root, expression_node* pRslt
     {
         if (pRsltLeft->strVal[0] == CHAR_SINGLE_QUOTATION &&
             pRsltLeft->strVal[strlen(pRsltLeft->strVal) - 1] == CHAR_SINGLE_QUOTATION)
-        {                        
-            userFuncs.GetStringSingleQuotationsBothSidesRemoved(pRsltLeft->strVal);            
+        {
+            userFuncs.GetStringSingleQuotationsBothSidesRemoved(pRsltLeft->strVal);
         }
         if (pRsltRight->strVal[0] == CHAR_SINGLE_QUOTATION &&
             pRsltRight->strVal[strlen(pRsltRight->strVal) - 1] == CHAR_SINGLE_QUOTATION)
-        {            
-            userFuncs.GetStringSingleQuotationsBothSidesRemoved(pRsltRight->strVal);            
+        {
+            userFuncs.GetStringSingleQuotationsBothSidesRemoved(pRsltRight->strVal);
         }
-        
+
         if (userFuncs.InvokeUserFunction(root,  pRsltLeft,  pRsltRight ))
-        {            
+        {
             //TODO remove converting !!!
             if (root->userFuncInfo.nReturnType == FUNC_RTN_STR)
             {
@@ -706,49 +706,49 @@ void ExpressionTree::EvaluateLogic(expression_node *root, expression_node* pRslt
         {
             root->opReslut = false;
         }
-        
+
     } // if (root->nType == NODE_USER_FUNCTIION)
     else
     {
         if (!CheckCompareError(pRsltLeft, pRsltRight))
         {
-            //cout << "Error : CheckCompareError" << "\n";            
-            root->opReslut = false;            
+            //cout << "Error : CheckCompareError" << "\n";
+            root->opReslut = false;
             return;
         }
 
         if (pRsltLeft->nType == NODE_LITERAL && pRsltRight->nType == NODE_LITERAL)
-        {                        
+        {
             //if expression is '12'='1'+'2' , strip off both side's single quotations..
             if (pRsltLeft->strVal[0] == CHAR_SINGLE_QUOTATION &&
                 pRsltLeft->strVal[strlen(pRsltLeft->strVal) - 1] == CHAR_SINGLE_QUOTATION)
-            {                
-                userFuncs.GetStringSingleQuotationsBothSidesRemoved(pRsltLeft->strVal);                
+            {
+                userFuncs.GetStringSingleQuotationsBothSidesRemoved(pRsltLeft->strVal);
             }
             if (pRsltRight->strVal[0] == CHAR_SINGLE_QUOTATION &&
                 pRsltRight->strVal[strlen(pRsltRight->strVal) - 1] == CHAR_SINGLE_QUOTATION)
-            {                
-                userFuncs.GetStringSingleQuotationsBothSidesRemoved(pRsltRight->strVal);                
+            {
+                userFuncs.GetStringSingleQuotationsBothSidesRemoved(pRsltRight->strVal);
             }
 
-            //root->opReslut = true;                        
+            //root->opReslut = true;
             EvaluateStringCondition(root, pRsltLeft, pRsltRight);
-            
+
             root->nType = NODE_LITERAL;
             root->nDetailedType = pRsltLeft->nDetailedType;
         }
         else if (pRsltLeft->nType == NODE_NUMBER && pRsltRight->nType == NODE_NUMBER)
-        {   
-            EvaluateNumericCondition(root, pRsltLeft, pRsltRight);            
+        {
+            EvaluateNumericCondition(root, pRsltLeft, pRsltRight);
             root->nType = NODE_NUMBER;
-            root->nDetailedType = pRsltLeft->nDetailedType;            
+            root->nDetailedType = pRsltLeft->nDetailedType;
         }
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ExpressionTree::SetDepth()
-{   
+{
     nDepthOfTree = 0;
     expression_node* pPosDepthCheck = root_node;
 
@@ -762,7 +762,7 @@ void ExpressionTree::SetDepth()
         else
         {
             if (pPosDepthCheck->nextForMore2funcArgs != NULL)
-            {                
+            {
                 pPosDepthCheck = pPosDepthCheck->nextForMore2funcArgs;
             }
             else
@@ -771,7 +771,7 @@ void ExpressionTree::SetDepth()
                 break;
             }
         }
-    }    
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -792,23 +792,23 @@ void ExpressionTree::EvaluateConditionNonRecursive(expression_node *root)
         {
             root = s.top();
             s.pop();
-           
+
             if (root->left && root->right)
-            {   
+            {
                 ///////////////////////////////////////////////////
                 EvaluateConditionNonRecursive(root->right->nextForMore2funcArgs);
                 EvaluateConditionNonRecursive(root->nextForMore2funcArgs);
                 ///////////////////////////////////////////////////
                 /*
                 cout << "--root nType=" << NodeTypeDesc[root->nType] << " / nDetailedType=" << DetailedTypeDesc[root->nDetailedType] << "/" << root->strVal << "/" << root->variable.nLongValue << "\n";
-                cout << "--L nType=" << NodeTypeDesc[root->left->nType] << " / nDetailedType=" << DetailedTypeDesc[root->left->nDetailedType] 
+                cout << "--L nType=" << NodeTypeDesc[root->left->nType] << " / nDetailedType=" << DetailedTypeDesc[root->left->nDetailedType]
                      << "/" << root->left->strVal << "/" << root->left->variable.nLongValue << "\n";
-                cout << "--R nType=" << NodeTypeDesc[root->right->nType] << " / nDetailedType=" << DetailedTypeDesc[root->right->nDetailedType] 
+                cout << "--R nType=" << NodeTypeDesc[root->right->nType] << " / nDetailedType=" << DetailedTypeDesc[root->right->nDetailedType]
                     << "/" << root->right->strVal << "/" << root->right->variable.nLongValue << "\n";
-                
+
                 if (root->nextForMore2funcArgs)
                 {
-                    cout << "--nextForMore2funcArgs nType=" << NodeTypeDesc[root->nextForMore2funcArgs->nType] << " / nDetailedType=" 
+                    cout << "--nextForMore2funcArgs nType=" << NodeTypeDesc[root->nextForMore2funcArgs->nType] << " / nDetailedType="
                         << DetailedTypeDesc[root->nextForMore2funcArgs->nDetailedType]
                         << "/" << root->nextForMore2funcArgs->strVal << "/" << root->nextForMore2funcArgs->variable.nLongValue << "\n";
                 }
@@ -820,9 +820,9 @@ void ExpressionTree::EvaluateConditionNonRecursive(expression_node *root)
                 }
                 */
                 EvaluateLogic(root, root->left, root->right );
-                
-            }           
-        }//while (!s.empty() && s.top()->right == root) 
+
+            }
+        }//while (!s.empty() && s.top()->right == root)
 
         root = s.empty() ? NULL : s.top()->right;
     }
@@ -830,13 +830,13 @@ void ExpressionTree::EvaluateConditionNonRecursive(expression_node *root)
 
 ///////////////////////////////////////////////////////////////////////////////
 bool ExpressionTree::EvaluateExpression()
-{        
-    EvaluateConditionNonRecursive(root_node); 
-           
+{
+    EvaluateConditionNonRecursive(root_node);
+
     //cout << "bool reslut   : " << expr_rslt.opReslut << "\n";
     //cout << "numeric reslt : " << expr_rslt.value << "\n";
     //cout << "string result : " << expr_rslt.strVal << "\n";
-        
+
     return root_node->opReslut;
 }
 
@@ -844,33 +844,33 @@ bool ExpressionTree::EvaluateExpression()
 expression_node* ExpressionTree::GetResult()
 {
     //return &expr_rslt;
-    return root_node; 
+    return root_node;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 bool ExpressionTree::BuildExpressionTree()
-{    
-    nDepthOfTree = 0;    
+{
+    nDepthOfTree = 0;
     DeleteExpressionTree(root_node);
 
     stack<expression_node*> treeNodeStack;
     stack<expression_node*> funcArgsNodeStack;
 
     for (vector<ItemTokenInfo>::iterator it = vecPostfixResult.begin(); it != vecPostfixResult.end(); ++it)
-    {                
+    {
         if (IsUserFunction(&(*it)))
-        {            
+        {
             int nArgCnt = it->userFuncInfo.ntotalInputArgCnt;
-                                    
+
             if (nArgCnt == 0)
             {
                 expression_node* node = CreateTreeNode();
                 expression_node* nodeEmptyR = CreateTreeNode(); //empty node
-                expression_node* nodeEmptyL = CreateTreeNode(); //empty node   
+                expression_node* nodeEmptyL = CreateTreeNode(); //empty node
                 nodeEmptyR->nType = NODE_EMPTY;
                 nodeEmptyL->nType = NODE_EMPTY;
-                                
+
                 node->right = nodeEmptyR;
                 node->left = nodeEmptyL;
                 node->nType = it->nType;
@@ -881,18 +881,24 @@ bool ExpressionTree::BuildExpressionTree()
             else if (nArgCnt == 1)
             {
                 int nArgType = it->userFuncInfo.nFuncArgsTypes[0];
-                expression_node* nodeStack = treeNodeStack.top(); 
-                                
+                if (treeNodeStack.empty()) //20140314
+                {
+                    //Error!!!
+                    cout << "ERROR : Wrong Expression!!\n";
+                    return false;
+                }
+                expression_node* nodeStack = treeNodeStack.top();
+
                 if (FUNC_ARG_STR == nArgType)
                 {
                     userFuncs.GetStringSingleQuotationsBothSidesRemoved(nodeStack->strVal);
                 }
-                
+
                 treeNodeStack.pop();
 
-                expression_node* nodeEmpty = CreateTreeNode(); //empty node   
+                expression_node* nodeEmpty = CreateTreeNode(); //empty node
                 nodeEmpty->nType = NODE_EMPTY;
-                expression_node* node = CreateTreeNode();                
+                expression_node* node = CreateTreeNode();
                 node->left = nodeStack ;
                 node->right = nodeEmpty;
                 node->nType = it->nType;
@@ -901,26 +907,38 @@ bool ExpressionTree::BuildExpressionTree()
                 treeNodeStack.push(node);
             }
             else if (nArgCnt == 2)
-            {                
+            {
                 int nArgType = it->userFuncInfo.nFuncArgsTypes[1];  // 1
+                if (treeNodeStack.empty()) //20140314
+                {
+                    //Error!!!
+                    cout << "ERROR : Wrong Expression!!\n";
+                    return false;
+                }
                 expression_node* nodeArgR = treeNodeStack.top();
-                
+
                 if (FUNC_ARG_STR == nArgType)
                 {
                     userFuncs.GetStringSingleQuotationsBothSidesRemoved(nodeArgR->strVal);
                 }
                 treeNodeStack.pop();
 
-                nArgType = it->userFuncInfo.nFuncArgsTypes[0];  
-                expression_node* nodeArgL = treeNodeStack.top();                
+                nArgType = it->userFuncInfo.nFuncArgsTypes[0];
+                if (treeNodeStack.empty()) //20140314
+                {
+                    //Error!!!
+                    cout << "ERROR : Wrong Expression!!\n";
+                    return false;
+                }
+                expression_node* nodeArgL = treeNodeStack.top();
                 if (FUNC_ARG_STR == nArgType)
                 {
                     userFuncs.GetStringSingleQuotationsBothSidesRemoved(nodeArgL->strVal);
-                }                
+                }
                 treeNodeStack.pop();
-                
+
                 expression_node* node = CreateTreeNode();
-                node->right = nodeArgR; //스택에서 먼저 나온것이 오른쪽. 
+                node->right = nodeArgR; //스택에서 먼저 나온것이 오른쪽.
                 node->left = nodeArgL;
                 node->nType = it->nType;
                 node->nDetailedType = it->nDetailedType;
@@ -928,22 +946,28 @@ bool ExpressionTree::BuildExpressionTree()
                 treeNodeStack.push(node);
             }
             else if (nArgCnt > 2)
-            {                                   
-                expression_node* node = CreateTreeNode();   
+            {
+                expression_node* node = CreateTreeNode();
                 expression_node* nodeRight = NULL;
-                                                
+
                 for (int i = 0; i < nArgCnt; i++)
                 {
-                    int nArgType = it->userFuncInfo.nFuncArgsTypes[nArgCnt -i -1]; //args type XXX 
-                    
+                    int nArgType = it->userFuncInfo.nFuncArgsTypes[nArgCnt -i -1]; //args type XXX
+
                     //'1','2','3' 경우 '3','2',1' 순서로 pop
-                    //         StrCat3 
+                    //         StrCat3
                     //   '1'             '2','3'
 
                     if (i == nArgCnt - 1) // last pop -> left
-                    {                        
+                    {
+                        if (treeNodeStack.empty()) //20140314
+                        {
+                            //Error!!!
+                            cout << "ERROR : Wrong Expression!!\n";
+                            return false;
+                        }
                         expression_node* nodeLeft = treeNodeStack.top();
-                        treeNodeStack.pop();                        
+                        treeNodeStack.pop();
                         if (FUNC_ARG_STR == nArgType)
                         {
                             userFuncs.GetStringSingleQuotationsBothSidesRemoved(nodeLeft->strVal);
@@ -951,9 +975,15 @@ bool ExpressionTree::BuildExpressionTree()
                         node->left = nodeLeft;
                     }
                     else if (i == nArgCnt - 2) // right
-                    {                    
+                    {
+                        if (treeNodeStack.empty()) //20140314
+                        {
+                            //Error!!!
+                            cout << "ERROR : Wrong Expression!!\n";
+                            return false;
+                        }
                         nodeRight = treeNodeStack.top();
-                        treeNodeStack.pop();                        
+                        treeNodeStack.pop();
                         if (FUNC_ARG_STR == nArgType)
                         {
                             userFuncs.GetStringSingleQuotationsBothSidesRemoved(nodeRight->strVal);
@@ -961,19 +991,25 @@ bool ExpressionTree::BuildExpressionTree()
                     }
                     else
                     {
+                        if (treeNodeStack.empty()) //20140314
+                        {
+                            //Error!!!
+                            cout << "ERROR : Wrong Expression!!\n";
+                            return false;
+                        }
                         expression_node* nodeForMore2Args = treeNodeStack.top();
-                        treeNodeStack.pop();                        
+                        treeNodeStack.pop();
                         if (FUNC_ARG_STR == nArgType)
                         {
                             userFuncs.GetStringSingleQuotationsBothSidesRemoved(nodeForMore2Args->strVal);
                         }
                         funcArgsNodeStack.push(nodeForMore2Args);
                     }
-                   
+
                 }//for
-                                
+
                 expression_node* nodePosForFuncArgs = NULL;
-                while (!funcArgsNodeStack.empty() ) 
+                while (!funcArgsNodeStack.empty() )
                 {
                     if (nodePosForFuncArgs == NULL)
                     {
@@ -988,21 +1024,21 @@ bool ExpressionTree::BuildExpressionTree()
 
                     funcArgsNodeStack.pop();
                 }
-                                
+
                 node->right = nodeRight;
                 node->nType = it->nType;
                 node->nDetailedType = it->nDetailedType;
                 memcpy(&node->userFuncInfo, &it->userFuncInfo, sizeof(node->userFuncInfo));
                 treeNodeStack.push(node);
-                
-            }   
+
+            }
         }
         else if (IsOperand(&(*it)))
         {
             expression_node* node = CreateTreeNode();
-            
+
             if (NODE_NUMBER == it->nType)
-            {                
+            {
                 if (NUMBER_LONG == it->nDetailedType)
                 {
                     node->variable. nLongValue = atol(it->strValue);
@@ -1013,10 +1049,10 @@ bool ExpressionTree::BuildExpressionTree()
                 }
                 else
                 {
-                    cout << "Error \n";                    
-                }                
+                    cout << "Error \n";
+                }
             }
-            else 
+            else
             {
                 memcpy(&node->strVal, it->strValue, sizeof(node->strVal));
             }
@@ -1026,13 +1062,26 @@ bool ExpressionTree::BuildExpressionTree()
         }
         else if (IsOperator(&(*it)))
         {
+            if (treeNodeStack.empty()) //20140314
+            {
+                //Error!!!
+                cout << "ERROR : Wrong Expression!!\n";
+                return false;
+            }
             expression_node* node1 = treeNodeStack.top();
             treeNodeStack.pop();
+
+            if (treeNodeStack.empty()) //20140314
+            {
+                //Error!!!
+                cout << "ERROR : Wrong Expression!!\n";
+                return false;
+            }
             expression_node* node2 = treeNodeStack.top();
             treeNodeStack.pop();
 
             expression_node* node = CreateTreeNode();
-            node->right = node1;  
+            node->right = node1;
             node->left = node2;
 
             node->nType = it->nType;
@@ -1045,6 +1094,12 @@ bool ExpressionTree::BuildExpressionTree()
         }
     }
 
+    if (treeNodeStack.empty()) //20140314
+    {
+        //Error!!!
+        cout << "ERROR : Wrong Expression!!\n";
+        return false;
+    }
     root_node = treeNodeStack.top();
     treeNodeStack.pop();
 
@@ -1056,7 +1111,7 @@ bool ExpressionTree::BuildExpressionTree()
 
 ///////////////////////////////////////////////////////////////////////////////
 void ExpressionTree::DeleteExpressionTree(expression_node* root)
-{       
+{
      while (!treeNodeMemRepository.empty() )
     {
         expression_node* pDelete = treeNodeMemRepository.top();
@@ -1067,6 +1122,6 @@ void ExpressionTree::DeleteExpressionTree(expression_node* root)
 
         --memStatus;
     }
-    
+
 }
 
