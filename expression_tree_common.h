@@ -49,7 +49,7 @@ typedef struct _USER_FUNC_ARG
     int nArgType;
     union _variable_container_
     {
-        bool    _bool;        
+        bool    _bool;
         long    _long;
         float   _float;
         char    _string[1024];
@@ -67,9 +67,9 @@ typedef struct _SFuncDefInfo
     int nDetailedReturnType;
     int ntotalInputArgCnt;
     int nFuncArgsTypes[30]; // FUNC_ARG_NUM, FUNC_ARG_STR
-        
+
     _SFuncDefInfo()
-    {        
+    {
         memset(&strFuncName, 0x00, sizeof(strFuncName));
         nReturnType = -1;
         nDetailedReturnType = -1;
@@ -93,33 +93,30 @@ struct expression_node
 {
     int nType;
     int nDetailedType;
-    
+
     union _variable_container_
-    {        
+    {
         //int   nIntValue;
         long  nLongValue;
-        float nFloatValue;        
+        float nFloatValue;
     } variable;
     bool  opReslut;
     char  strVal[1024];
-    
+
     SFuncDefInfo userFuncInfo;//filled only if this is a function
-    
+
     expression_node* nextForMore2funcArgs;
-    //dynamic array for a function with more than 2 arguments.
-    //if function has 4 args, left has arg1, right has arg2, 
-    //funcArgsNodes[0] has arg3 and funcArgsNodes[1] has arg4.
 
     expression_node *left;
     expression_node *right;
 
     expression_node()
     {
-        memset(&userFuncInfo, 0x00, sizeof(userFuncInfo));       
+        memset(&userFuncInfo, 0x00, sizeof(userFuncInfo));
         nType = -1;
         nDetailedType = -1;
 
-        opReslut = false;        
+        opReslut = false;
         variable.nLongValue = -1;
         variable.nFloatValue = -1.0;
         memset(&strVal, 0x00, sizeof(strVal));
