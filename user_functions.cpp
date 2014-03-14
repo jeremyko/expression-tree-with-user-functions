@@ -20,20 +20,20 @@ CUserFunctions::~CUserFunctions()
 
 void CUserFunctions::InsertMap(int nRtnType, int nRtnTypeDetailed, const char* strFuncName, int nArgCnt, ...)
 {
-    SFuncDefInfo funcDef;    
+    SFuncDefInfo funcDef;
     strcpy(funcDef.strFuncName, strFuncName );
     funcDef.nReturnType = nRtnType;
     funcDef.nDetailedReturnType = nRtnTypeDetailed;
     funcDef.ntotalInputArgCnt = nArgCnt;
-    
-    va_list arguments;            
+
+    va_list arguments;
     va_start(arguments, nArgCnt);
     for (int x = 0; x < nArgCnt; x++)
     {
         int nVar = va_arg(arguments, int);
         funcDef.nFuncArgsTypes[x] = nVar;
     }
-    va_end(arguments);  
+    va_end(arguments);
     mapFuncDefinitions.insert(VT_MAP_USER_FUNC(string(strFuncName), funcDef));
 }
 
@@ -58,9 +58,9 @@ bool CUserFunctions::Initialize()
     InsertMap(FUNC_RTN_BOOL, FUNC_RTN_DETAILED_BOOL, "GetBool", 1, FUNC_ARG_BOOL);
     InsertMap(FUNC_RTN_BOOL, FUNC_RTN_DETAILED_BOOL,"testBool", 3, FUNC_ARG_NUM, FUNC_ARG_STR, FUNC_ARG_BOOL);
     InsertMap(FUNC_RTN_BOOL, FUNC_RTN_DETAILED_BOOL,"testBool2", 2, FUNC_ARG_NUM, FUNC_ARG_BOOL);
-    
-    
-        
+
+
+
     return true;
 }
 
@@ -72,13 +72,13 @@ bool CUserFunctions::IsThisUserFunction(const char* strFuncName, IT_MAP_USER_FUN
     {
         return true;
     }
-        
+
     return false;
 }
 
 //remove single quotations both sides
 bool CUserFunctions::GetStringSingleQuotationsBothSidesRemoved(char* strExpression)
-{    
+{
     char *quotPtr = strchr(strExpression, '\'');
     if (quotPtr == NULL)
     {
@@ -96,8 +96,8 @@ bool CUserFunctions::GetStringSingleQuotationsBothSidesRemoved(char* strExpressi
     {
         //cout << "no single quot :" << strExpression << endl;
         return false;
-    }    
-    position = quotPtr - attrValue;    
+    }
+    position = quotPtr - attrValue;
     memset(strExpression, 0x00, sizeof(attrValue));
     strncpy(strExpression, attrValue, position);
 
@@ -106,9 +106,9 @@ bool CUserFunctions::GetStringSingleQuotationsBothSidesRemoved(char* strExpressi
 
 
 ///////////////////////////////////////////////////////////////////////////////
-bool CUserFunctions::InvokeUserFunction(expression_node* pRoot, 
-                    expression_node* pFuncArgLeft, //(array)첫번째 함수인자 
-                    expression_node* pFuncArgRight //(array)두번째부터                     
+bool CUserFunctions::InvokeUserFunction(expression_node* pRoot,
+                    expression_node* pFuncArgLeft, //(array)첫번째 함수인자
+                    expression_node* pFuncArgRight //(array)두번째부터
                     )
 {
     //cout << "InvokeUserFunction " << endl;
@@ -117,23 +117,23 @@ bool CUserFunctions::InvokeUserFunction(expression_node* pRoot,
         strcpy(pRoot->strVal, StrCat(pFuncArgLeft->strVal, pFuncArgRight->strVal));
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "StrCat3") == 0) //3 arg
-    {        
+    {
         strcpy(pRoot->strVal, StrCat3(pFuncArgLeft->strVal,
             pFuncArgRight->strVal,
-            pFuncArgRight->nextForMore2funcArgs->strVal));
+            pFuncArgRight->rightSiblingForMore2funcArgs->strVal));
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "StrCat4") == 0) //4 arg
-    {                        
+    {
         strcpy(pRoot->strVal, StrCat4(
                             pFuncArgLeft->strVal,
                             pFuncArgRight->strVal,
-                            pFuncArgRight->nextForMore2funcArgs->strVal,
-                            pFuncArgRight->nextForMore2funcArgs->nextForMore2funcArgs->strVal 
-                            ) 
+                            pFuncArgRight->rightSiblingForMore2funcArgs->strVal,
+                            pFuncArgRight->rightSiblingForMore2funcArgs->rightSiblingForMore2funcArgs->strVal
+                            )
               );
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "StrLen") == 0)
-    {        
+    {
         pRoot->variable.nLongValue = StrLen(pFuncArgLeft->strVal);
     }
 
@@ -143,18 +143,18 @@ bool CUserFunctions::InvokeUserFunction(expression_node* pRoot,
                                 pFuncArgRight->variable.nLongValue);
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "SumInt3") == 0)
-    {        
+    {
         pRoot->variable.nLongValue = SumInt3(
-            pFuncArgLeft->variable.nLongValue, 
-            pFuncArgRight->variable.nLongValue, 
-            pFuncArgRight->nextForMore2funcArgs->variable.nLongValue);
+            pFuncArgLeft->variable.nLongValue,
+            pFuncArgRight->variable.nLongValue,
+            pFuncArgRight->rightSiblingForMore2funcArgs->variable.nLongValue);
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "SumInt4") == 0)
-    {        
+    {
         pRoot->variable.nLongValue = SumInt4(pFuncArgLeft->variable.nLongValue,
             pFuncArgRight->variable.nLongValue,
-            pFuncArgRight->nextForMore2funcArgs->variable.nLongValue,
-            pFuncArgRight->nextForMore2funcArgs->nextForMore2funcArgs->variable.nLongValue
+            pFuncArgRight->rightSiblingForMore2funcArgs->variable.nLongValue,
+            pFuncArgRight->rightSiblingForMore2funcArgs->rightSiblingForMore2funcArgs->variable.nLongValue
             );
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "AsciiToInt") == 0)
@@ -180,20 +180,20 @@ bool CUserFunctions::InvokeUserFunction(expression_node* pRoot,
             pFuncArgRight->strVal));
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "GetStrSum3") == 0)
-    {        
+    {
         strcpy(pRoot->strVal, GetStrSum3(pFuncArgLeft->variable.nLongValue,
-            pFuncArgRight->strVal, pFuncArgRight->nextForMore2funcArgs->variable.nLongValue ));
+            pFuncArgRight->strVal, pFuncArgRight->rightSiblingForMore2funcArgs->variable.nLongValue ));
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "GetBool") == 0)
-    {        
+    {
         pRoot->opReslut = GetBool(pFuncArgLeft->opReslut);
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "testBool") == 0)
-    {        
-        pRoot->opReslut = testBool(pFuncArgLeft->variable.nLongValue, pFuncArgRight->strVal, pFuncArgRight->nextForMore2funcArgs->opReslut);
+    {
+        pRoot->opReslut = testBool(pFuncArgLeft->variable.nLongValue, pFuncArgRight->strVal, pFuncArgRight->rightSiblingForMore2funcArgs->opReslut);
     }
     else if (strcmp(pRoot->userFuncInfo.strFuncName, "testBool2") == 0)
-    {                
+    {
         pRoot->opReslut = testBool2(pFuncArgLeft->variable.nLongValue, pFuncArgRight->opReslut);
     }
 
@@ -232,7 +232,7 @@ char*  CUserFunctions::GetStrPlus100(long nCnt)
 {
     memset(&szReturn, 0x00, sizeof(szReturn));
     sprintf(szReturn, "%ld", nCnt + 100);
-    
+
     return szReturn;
 }
 
@@ -246,7 +246,7 @@ bool CUserFunctions::testBool(int nVal1, char* szVal2, bool boolFlag)
     else
     {
         return false;
-    }    
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -292,14 +292,14 @@ char* CUserFunctions::StrCat( char* str1,  char* str2)
 
 ///////////////////////////////////////////////////////////////////////////////
 char* CUserFunctions::StrCat3(char* str1, char* str2, char* str3)
-{   
+{
     strcat(str1, str2);
     strcat(str1, str3);
     return str1;
 }
 
 char* CUserFunctions::StrCat4(char* str1, char* str2, char* str3, char* str4)
-{    
+{
     strcat(str1, str2);
     strcat(str1, str3);
     strcat(str1, str4);

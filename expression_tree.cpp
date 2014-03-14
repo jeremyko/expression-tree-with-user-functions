@@ -761,9 +761,9 @@ void ExpressionTree::SetDepth()
         }
         else
         {
-            if (pPosDepthCheck->nextForMore2funcArgs != NULL)
+            if (pPosDepthCheck->rightSiblingForMore2funcArgs != NULL)
             {
-                pPosDepthCheck = pPosDepthCheck->nextForMore2funcArgs;
+                pPosDepthCheck = pPosDepthCheck->rightSiblingForMore2funcArgs;
             }
             else
             {
@@ -796,8 +796,8 @@ void ExpressionTree::EvaluateConditionNonRecursive(expression_node *root)
             if (root->left && root->right)
             {
                 ///////////////////////////////////////////////////
-                EvaluateConditionNonRecursive(root->right->nextForMore2funcArgs);
-                EvaluateConditionNonRecursive(root->nextForMore2funcArgs);
+                EvaluateConditionNonRecursive(root->right->rightSiblingForMore2funcArgs);
+                EvaluateConditionNonRecursive(root->rightSiblingForMore2funcArgs);
                 ///////////////////////////////////////////////////
                 /*
                 cout << "--root nType=" << NodeTypeDesc[root->nType] << " / nDetailedType=" << DetailedTypeDesc[root->nDetailedType] << "/" << root->strVal << "/" << root->variable.nLongValue << "\n";
@@ -806,17 +806,17 @@ void ExpressionTree::EvaluateConditionNonRecursive(expression_node *root)
                 cout << "--R nType=" << NodeTypeDesc[root->right->nType] << " / nDetailedType=" << DetailedTypeDesc[root->right->nDetailedType]
                     << "/" << root->right->strVal << "/" << root->right->variable.nLongValue << "\n";
 
-                if (root->nextForMore2funcArgs)
+                if (root->rightSiblingForMore2funcArgs)
                 {
-                    cout << "--nextForMore2funcArgs nType=" << NodeTypeDesc[root->nextForMore2funcArgs->nType] << " / nDetailedType="
-                        << DetailedTypeDesc[root->nextForMore2funcArgs->nDetailedType]
-                        << "/" << root->nextForMore2funcArgs->strVal << "/" << root->nextForMore2funcArgs->variable.nLongValue << "\n";
+                    cout << "--rightSiblingForMore2funcArgs nType=" << NodeTypeDesc[root->rightSiblingForMore2funcArgs->nType] << " / nDetailedType="
+                        << DetailedTypeDesc[root->rightSiblingForMore2funcArgs->nDetailedType]
+                        << "/" << root->rightSiblingForMore2funcArgs->strVal << "/" << root->rightSiblingForMore2funcArgs->variable.nLongValue << "\n";
                 }
-                if (root->right->nextForMore2funcArgs)
+                if (root->right->rightSiblingForMore2funcArgs)
                 {
-                    cout << "--nextForMore2funcArgs nType=" << NodeTypeDesc[root->right->nextForMore2funcArgs->nType] << " / nDetailedType="
-                        << DetailedTypeDesc[root->right->nextForMore2funcArgs->nDetailedType]
-                        << "/" << root->right->nextForMore2funcArgs->strVal << "/" << root->right->nextForMore2funcArgs->variable.nLongValue << "\n";
+                    cout << "--rightSiblingForMore2funcArgs nType=" << NodeTypeDesc[root->right->rightSiblingForMore2funcArgs->nType] << " / nDetailedType="
+                        << DetailedTypeDesc[root->right->rightSiblingForMore2funcArgs->nDetailedType]
+                        << "/" << root->right->rightSiblingForMore2funcArgs->strVal << "/" << root->right->rightSiblingForMore2funcArgs->variable.nLongValue << "\n";
                 }
                 */
                 EvaluateLogic(root, root->left, root->right );
@@ -1013,13 +1013,13 @@ bool ExpressionTree::BuildExpressionTree()
                 {
                     if (nodePosForFuncArgs == NULL)
                     {
-                        nodePosForFuncArgs = nodeRight->nextForMore2funcArgs = funcArgsNodeStack.top();
+                        nodePosForFuncArgs = nodeRight->rightSiblingForMore2funcArgs = funcArgsNodeStack.top();
                     }
                     else
                     {
-                        nodePosForFuncArgs->nextForMore2funcArgs = CreateTreeNode();
-                        nodePosForFuncArgs->nextForMore2funcArgs = funcArgsNodeStack.top();
-                        nodePosForFuncArgs = nodePosForFuncArgs->nextForMore2funcArgs;
+                        nodePosForFuncArgs->rightSiblingForMore2funcArgs = CreateTreeNode();
+                        nodePosForFuncArgs->rightSiblingForMore2funcArgs = funcArgsNodeStack.top();
+                        nodePosForFuncArgs = nodePosForFuncArgs->rightSiblingForMore2funcArgs;
                     }
 
                     funcArgsNodeStack.pop();

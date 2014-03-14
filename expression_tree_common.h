@@ -105,7 +105,10 @@ struct expression_node
 
     SFuncDefInfo userFuncInfo;//filled only if this is a function
 
-    expression_node* nextForMore2funcArgs;
+    expression_node* rightSiblingForMore2funcArgs;
+    //dynamic array for a function with more than 2 arguments.
+    //if function has 4 args, left has arg1, right has arg2,
+    //siblingForMore2funcArgs[0] has arg3 and siblingForMore2funcArgs[1] has arg4.
 
     expression_node *left;
     expression_node *right;
@@ -121,7 +124,7 @@ struct expression_node
         variable.nFloatValue = -1.0;
         memset(&strVal, 0x00, sizeof(strVal));
 
-        nextForMore2funcArgs = NULL;
+        rightSiblingForMore2funcArgs = NULL;
         left = NULL;
         right = NULL;
     }
