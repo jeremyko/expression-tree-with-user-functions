@@ -25,7 +25,7 @@ public:
     bool SetInfixExpression(const char* inFix);
     bool EvaluateExpression();    
     expression_node* GetResult();
-    int GetDepth() { return nDepthOfTree; };
+    //int GetDepth() { return nDepthOfTree; };
             
 protected:
     int nDepthOfTree;

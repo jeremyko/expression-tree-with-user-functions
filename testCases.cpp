@@ -56,7 +56,6 @@
             EXPECT_TRUE(bRslt);
             bRslt = expTree.EvaluateExpression();
             EXPECT_TRUE(bRslt);
-            EXPECT_EQ(4, expTree.GetDepth());
             pExpressionRslt = expTree.GetResult();
             cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
             EXPECT_STREQ("1aXY", pExpressionRslt->strVal);
@@ -72,7 +71,6 @@
             EXPECT_TRUE(bRslt);
             bRslt = expTree.EvaluateExpression();
             EXPECT_TRUE(bRslt);
-            EXPECT_EQ(4, expTree.GetDepth());
             pExpressionRslt = expTree.GetResult();
             cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
             EXPECT_STREQ("12abXYZ", pExpressionRslt->strVal);

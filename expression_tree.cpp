@@ -747,34 +747,6 @@ void ExpressionTree::EvaluateLogic(expression_node *root, expression_node* pRslt
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ExpressionTree::SetDepth()
-{
-    nDepthOfTree = 0;
-    expression_node* pPosDepthCheck = root_node;
-
-    while (pPosDepthCheck)
-    {
-        if (pPosDepthCheck->right != NULL)
-        {
-            nDepthOfTree++;
-            pPosDepthCheck = pPosDepthCheck->right;
-        }
-        else
-        {
-            if (pPosDepthCheck->rightSiblingForMore2funcArgs != NULL)
-            {
-                pPosDepthCheck = pPosDepthCheck->rightSiblingForMore2funcArgs;
-            }
-            else
-            {
-                nDepthOfTree++; //for leafs
-                break;
-            }
-        }
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
 void ExpressionTree::EvaluateConditionNonRecursive(expression_node *root)
 {
     stack<expression_node*> s;
@@ -1102,8 +1074,6 @@ bool ExpressionTree::BuildExpressionTree()
     }
     root_node = treeNodeStack.top();
     treeNodeStack.pop();
-
-    SetDepth();
 
     return true;
 }
