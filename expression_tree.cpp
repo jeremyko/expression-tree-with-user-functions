@@ -77,6 +77,44 @@ ExpressionTree::~ExpressionTree()
     cout << "memStatus: " << memStatus << "\n";
 }
 
+///////////////////////////////////////////////////////////////////////////////
+int ExpressionTree::GetDepth( )
+{
+    return GetDepth (root_node); 
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int ExpressionTree::GetDepth( expression_node* root )
+{
+    int nDepthLeft, nDepthRight;
+    if(root == NULL)
+    {
+        return 0;
+    }
+    else
+    {
+        if(root->rightSiblingForMore2funcArgs)
+        {
+            nDepthLeft = GetDepth (root->rightSiblingForMore2funcArgs->left);
+            nDepthRight = GetDepth (root->rightSiblingForMore2funcArgs->right);
+        }
+        else
+        {
+            nDepthLeft = GetDepth (root->left);
+            nDepthRight = GetDepth (root->right);
+        }
+
+        if(nDepthLeft > nDepthRight )
+        {
+            return (nDepthLeft + 1);
+        }
+        else
+        {
+            return (nDepthRight + 1);
+        }
+    }
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 bool ExpressionTree::IsUserFunction(ItemTokenInfo* pNodeInfo)

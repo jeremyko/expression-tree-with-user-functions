@@ -2,12 +2,13 @@
 #define	_EXPRESSION_TREE_H_
 
 
-using namespace std;
 
 #include<iostream>
 #include<stack>
 #include<vector>
 #include <string>
+using namespace std;
+
 #include <memory.h>
 #include "token_parser.h"
 #include "user_functions.h"
@@ -25,12 +26,12 @@ public:
     bool SetInfixExpression(const char* inFix);
     bool EvaluateExpression();    
     expression_node* GetResult();
-    //int GetDepth() { return nDepthOfTree; };
+    int GetDepth();
             
 protected:
     int nDepthOfTree;
     int  memStatus;
-    void SetDepth();
+    int GetDepth( expression_node* root );
     bool IsOperator(ItemTokenInfo* pNodeInfo);
     bool IsOperand(ItemTokenInfo* pNodeInfo);
     bool IsUserFunction(ItemTokenInfo* pNodeInfo);
