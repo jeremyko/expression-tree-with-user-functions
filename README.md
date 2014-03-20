@@ -68,6 +68,7 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
         cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
         EXPECT_EQ ( 3, pExpressionRslt->nResultLong );
         
+        //-----------------------------------------------------
         //there's no rebuild tree
         expTree.SetNumberFloatValueOfPlaceHolder ( 1, 2.0f );
         expTree.SetNumberFloatValueOfPlaceHolder ( 2, 3.0f );
@@ -77,6 +78,7 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
         cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
         EXPECT_FLOAT_EQ ( 5.0f, pExpressionRslt->nResultFloat );
 
+        //-----------------------------------------------------
         expTree.SetStringValueOfPlaceHolder ( 1, "A" );
         expTree.SetStringValueOfPlaceHolder ( 2, "B" );
         bRslt = expTree.EvaluateExpression ( );
