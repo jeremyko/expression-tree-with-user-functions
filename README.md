@@ -3,7 +3,8 @@
 http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
 
 #Usage 
- 
+
+##general arithmetic
     ExpressionTree expTree;
     expression_node* pExpressionRslt;
     bool bRslt = false;
@@ -20,7 +21,8 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
             << pExpressionRslt->variable.nLongValue << "\n";
        EXPECT_EQ(-2, pExpressionRslt->variable.nLongValue);
     }
-
+##custom user functions 
+    //see user_functions.h, user_functions.cpp
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt4(SumInt4(1,1+1,1+1,2), 1+1, 1+1, 1+1)");
     EXPECT_TRUE(bRslt);
@@ -52,7 +54,39 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
     pExpressionRslt = expTree.GetResult();
     cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
     EXPECT_STREQ("12abXYZ", pExpressionRslt->strVal);
- 
+
+##using placeholder 
+    bRslt = expTree.SetInfixExpression ( ":$ph1+:$ph2" );
+    EXPECT_TRUE ( bRslt );
+    if ( bRslt )
+    {
+        expTree.SetNumberLongValueOfPlaceHolder ( 1, 1 );
+        expTree.SetNumberLongValueOfPlaceHolder ( 2, 2 );
+
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ ( 3, pExpressionRslt->nResultLong );
+        
+        //there's no rebuild tree
+        expTree.SetNumberFloatValueOfPlaceHolder ( 1, 2.0f );
+        expTree.SetNumberFloatValueOfPlaceHolder ( 2, 3.0f );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_FLOAT_EQ ( 5.0f, pExpressionRslt->nResultLong );
+
+        expTree.SetStringValueOfPlaceHolder ( 1, "A" );
+        expTree.SetStringValueOfPlaceHolder ( 2, "B" );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+        EXPECT_STREQ ( "AB", pExpressionRslt->strResult );
+    }
+
 #LICENSE
 
 This projected is licensed under the terms of the BSD license.
