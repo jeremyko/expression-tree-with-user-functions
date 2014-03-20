@@ -75,8 +75,8 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
         bRslt = expTree.EvaluateExpression ( );
         EXPECT_TRUE ( bRslt );
         pExpressionRslt = expTree.GetResult ( );
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
-        EXPECT_FLOAT_EQ ( 5.0f, pExpressionRslt->nResultLong );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+        EXPECT_FLOAT_EQ ( 5.0f, pExpressionRslt->nResultFloat );
 
         expTree.SetStringValueOfPlaceHolder ( 1, "A" );
         expTree.SetStringValueOfPlaceHolder ( 2, "B" );
