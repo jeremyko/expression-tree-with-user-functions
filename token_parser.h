@@ -31,9 +31,16 @@ enum EnumNodeType
     NODE_CALCULATE_OPERATOR, //5 Operator  +, -, *, /	
     NODE_DELIMITER,          //6 Delimiter (, ), ,(a pause)		        
     NODE_USER_FUNCTIION,     //7 functions in CUserFunctions
-    NODE_EMPTY ,             //8 empty args  --> 인자수 하나인 함수의 경우 child 트리 node 2개 조건을 만족하게 하기 위해 빈 노드를 가진다 XXX -> TODO 개선..
+    NODE_PLACE_HOLDER,       //8 20140314 : 
+    NODE_EMPTY ,             //9 empty args  --> 인자수 하나인 함수의 경우 child 트리 node 2개 조건을 만족하게 하기 위해 빈 노드를 가진다 XXX -> TODO 개선..
     MAX_NODE_TYPE
 };
+
+//TKN_END,               // 식이 끝났음
+//TKN_QUESTION ,
+//TKN_COLON ,   
+//PAUSE,                  // ,
+//TKN_NULL,
 
 enum EnumNodeDetailedType
 {    
@@ -61,8 +68,9 @@ enum EnumNodeDetailedType
     LITERAL,               //16    
     NUMBER_INT,            //17
     NUMBER_LONG,           //18
-    NUMBER_FLOAT,          //19
-    BOOL_TYPE              //20
+    NUMBER_FLOAT,         //19    
+    BOOL_TYPE,             //20
+    PLACE_HOLDER           //21 20140314 
 };
 
 enum EnumTypeOfOneCharToken
@@ -94,6 +102,8 @@ const char CHAR_DOLLAR              = '$';
 //const char CHAR_PAUSE               = ',';
 const char CHAR_COMMA = ',';
 
+// :$ph1, :$ph2, :$ph3...
+#define PLACE_HOLDER_PREFIX  ":$ph" //using placeholder 20140314
 
 //--------------------------------------------------------------------------
 class CTokenParser
@@ -112,6 +122,7 @@ private:
 protected:	
 	int GetIdentifierCount( char* strexp);    
 	int GetTokenType(char*);
+    int GetPlaceHolderLength(char *strexp); //20140314
     CUserFunctions funcMap;    
 
 public:

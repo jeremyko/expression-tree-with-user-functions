@@ -4,8 +4,6 @@
 #include <map>
 #include <vector>
 #include <iostream>
-#include <memory.h>
-
 
 using namespace std;
 
@@ -49,7 +47,7 @@ typedef struct _USER_FUNC_ARG
     int nArgType;
     union _variable_container_
     {
-        bool    _bool;
+        bool    _bool;        
         long    _long;
         float   _float;
         char    _string[1024];
@@ -57,8 +55,6 @@ typedef struct _USER_FUNC_ARG
 
 } USER_FUNC_ARG;
 
-typedef vector<USER_FUNC_ARG> VEC_USER_FUNC_ARGS;
-typedef vector<USER_FUNC_ARG>::iterator IT_VEC_USER_FUNC_ARGS;
 
 typedef struct _SFuncDefInfo
 {
@@ -67,9 +63,9 @@ typedef struct _SFuncDefInfo
     int nDetailedReturnType;
     int ntotalInputArgCnt;
     int nFuncArgsTypes[30]; // FUNC_ARG_NUM, FUNC_ARG_STR
-
+        
     _SFuncDefInfo()
-    {
+    {        
         memset(&strFuncName, 0x00, sizeof(strFuncName));
         nReturnType = -1;
         nDetailedReturnType = -1;
@@ -79,50 +75,127 @@ typedef struct _SFuncDefInfo
 
 } SFuncDefInfo;
 
-typedef vector<SFuncDefInfo> VEC_USER_FUNC;
-typedef VEC_USER_FUNC::iterator            IT_VEC_USER_FUNC;
 typedef map<string, SFuncDefInfo> MAP_USER_FUNC;
 typedef MAP_USER_FUNC::iterator            IT_MAP_USER_FUNC;
 typedef MAP_USER_FUNC::value_type          VT_MAP_USER_FUNC;
 typedef pair<IT_MAP_USER_FUNC, bool>       PA_MAP_USER_FUNC;
 
 
+///////////////////////////////////////////////////////////////////////////////
+class PlaceHolderValue //20140314
+{
+public:
+    PlaceHolderValue()
+    {
+        nLongValue  = -1;
+        nFloatValue = -1.0;
+        memset(stringVal, 0x00, sizeof(stringVal));
+    }
+protected:
+    int     nPlaceHolderDataType; //NODE_NUMBER, NODE_LITERAL    
+    int     nPlaceHolderDetailedDataType; // NUMBER_INT, NUMBER_LONG, NUMBER_FLOAT  
+    long    nLongValue;
+    float   nFloatValue;
+    char    stringVal[1024];
+
+public:
+    void SetDataType(int nDataType, int nDetailedDataType)
+    {
+        nPlaceHolderDataType = nDataType;
+        nPlaceHolderDetailedDataType = nDetailedDataType;
+    }
+
+    int GetDataType() { return nPlaceHolderDataType;  }
+    int GetDetailedDataType() { return nPlaceHolderDetailedDataType; }
+
+    void SetStringData(const char* strData)
+    {
+        strncpy(stringVal, strData, sizeof(stringVal));
+    }
+
+    char* GetStringData()
+    {
+        return stringVal;
+    }
+
+    void SetNumberLongData(long  nVal)
+    {
+        nLongValue = nVal;
+    }
+
+    long GetNumberLongData()
+    {
+        return nLongValue ;
+    }
+
+    void SetNumberFloatData(float  nVal)
+    {
+        nFloatValue = nVal;
+    }
+
+    float GetNumberFloatData()
+    {
+        return nFloatValue;
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////
+typedef struct _expression_result_
+{
+    int    nResultType;
+    int    nResultDetailedType;
+    
+    long   nResultLong;
+    float  nResultFloat;    
+    bool   bResult;
+    char   strResult[1024];
+
+    _expression_result_()
+    {
+        nResultType = -1;
+        nResultDetailedType = -1;
+        nResultLong = -1;
+        nResultFloat = -1.0;
+        bResult = false;        
+        memset(&strResult, 0x00, sizeof(strResult));
+    }
+} expression_result;
 
 ///////////////////////////////////////////////////////////////////////////////
 struct expression_node
 {
-    int nType;
-    int nDetailedType;
-
-    union _variable_container_
-    {
-        //int   nIntValue;
-        long  nLongValue;
-        float nFloatValue;
-    } variable;
-    bool  opReslut;
-    char  strVal[1024];
-
+    //--------------------------------------
+    //input or meta or function, operator info
+    int    nType;
+    int    nDetailedType;
+    long   nLongValue;
+    float  nFloatValue;                
+    char   strVal[1024];    
     SFuncDefInfo userFuncInfo;//filled only if this is a function
-
-    expression_node* rightSiblingForMore2funcArgs;
-    //dynamic array for a function with more than 2 arguments.
-    //if function has 4 args, left has arg1, right has arg2,
-    //right->siblingForMore2funcArgs has arg3
-    //and right->siblingForMore2funcArgs->siblingForMore2funcArgs has arg4.
-
+    //--------------------------------------
+    
+    //--------------------------------------
+    //result of operator, user function
+    //initial value is same as input
+    expression_result expressionResult; 
+    //--------------------------------------
+        
     expression_node *left;
     expression_node *right;
+        
+    //dynamic array for a function with more than 2 arguments.
+    //if function has 4 args, left has arg1, right has arg2, 
+    //right->siblingForMore2funcArgs has arg3 and 
+    //right->siblingForMore2funcArgs->siblingForMore2funcArgs has arg4.
+    expression_node* rightSiblingForMore2funcArgs;
 
     expression_node()
     {
-        memset(&userFuncInfo, 0x00, sizeof(userFuncInfo));
+        memset(&userFuncInfo, 0x00, sizeof(userFuncInfo));       
         nType = -1;
-        nDetailedType = -1;
-
-        opReslut = false;
-        variable.nLongValue = -1;
-        variable.nFloatValue = -1.0;
+        nDetailedType = -1;        
+        nLongValue = -1;
+        nFloatValue = -1.0;
         memset(&strVal, 0x00, sizeof(strVal));
 
         rightSiblingForMore2funcArgs = NULL;
@@ -130,6 +203,7 @@ struct expression_node
         right = NULL;
     }
 };
+
 
 
 #endif

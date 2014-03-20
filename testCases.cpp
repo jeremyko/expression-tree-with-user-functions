@@ -1,48 +1,349 @@
 #include "gtest/gtest.h"
 #include "expression_tree.h"
 #include "user_functions.h"
+#include <math.h>
 
-
-ExpressionTree expTree;
 
 ///////////////////////////////////////////////////////////////////////////////
-TEST(ExpressionTest, TODO_NotImplemented)
-{
+TEST(ExpressionTest, PlaceHolderTest)
+{       
+    ExpressionTree expTree;
+    bool bRslt = false;    
+    expression_result * pExpressionRslt;
 
-    //ExpressionTree expTree;
-    //bool bRslt = false;
-    //expression_node* pExpressionRslt;       
+    cout << "\n     1+2\n";
+    bRslt = expTree.SetInfixExpression ( ":$ph1+ AsciiToInt(:$ph2)" );
+    EXPECT_TRUE ( bRslt );
+    if ( bRslt )
+    {
+        expTree.SetNumberLongValueOfPlaceHolder ( 1, 1 );
+        expTree.SetStringValueOfPlaceHolder ( 2, "2" );        
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ ( 3, pExpressionRslt->nResultLong );
+
+        expTree.SetNumberLongValueOfPlaceHolder ( 1, 2 );
+        expTree.SetStringValueOfPlaceHolder ( 2, "3" );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ ( 5, pExpressionRslt->nResultLong );
+
+        expTree.SetNumberLongValueOfPlaceHolder ( 1, 4 );
+        expTree.SetStringValueOfPlaceHolder ( 2, "5" );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ ( 9, pExpressionRslt->nResultLong );
+    }
+
+    cout << "\n     1+2+3+4+5 \n";
+    bRslt = expTree.SetInfixExpression ( ":$ph1+ AsciiToInt(:$ph2)+ SumInt(:$ph3, SumInt(:$ph4, :$ph5))" );
+    EXPECT_TRUE ( bRslt );
+    if ( bRslt )
+    {
+        expTree.SetNumberLongValueOfPlaceHolder ( 1, 1 );
+        expTree.SetStringValueOfPlaceHolder ( 2, "2" );
+        expTree.SetNumberLongValueOfPlaceHolder ( 3, 3 );
+        expTree.SetNumberLongValueOfPlaceHolder ( 4, 4 );
+        expTree.SetNumberLongValueOfPlaceHolder ( 5, 5 );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ ( 15, pExpressionRslt->nResultLong );
+    }
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( ":$ph1+:$ph2" );
+    EXPECT_TRUE ( bRslt );
+    if ( bRslt )
+    {
+        expTree.SetNumberLongValueOfPlaceHolder ( 1, 1 );
+        expTree.SetNumberLongValueOfPlaceHolder ( 2, 2 );
+
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ ( 3, pExpressionRslt->nResultLong );
+
+        expTree.SetNumberLongValueOfPlaceHolder ( 1, 2 );
+        expTree.SetNumberLongValueOfPlaceHolder ( 2, 3 );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ ( 5, pExpressionRslt->nResultLong );
+
+        expTree.SetStringValueOfPlaceHolder ( 1, "A" );
+        expTree.SetStringValueOfPlaceHolder ( 2, "B" );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+        EXPECT_STREQ ( "AB", pExpressionRslt->strResult );
+    }
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "StrCat3(:$ph1,StrCat3(:$ph2,:$ph3,StrCat3(:$ph4,:$ph5,StrCat3(:$ph6,:$ph7,StrCat3(:$ph8,:$ph9,:$ph10)))),'X')" );
+    EXPECT_TRUE ( bRslt );
+    EXPECT_TRUE ( bRslt );
+    if ( bRslt )
+    {
+        expTree.SetStringValueOfPlaceHolder ( 1, "1" );
+        expTree.SetStringValueOfPlaceHolder ( 2, "2" );
+        expTree.SetStringValueOfPlaceHolder ( 3, "3" );
+        expTree.SetStringValueOfPlaceHolder ( 4, "4" );
+        expTree.SetStringValueOfPlaceHolder ( 5, "5" );
+        expTree.SetStringValueOfPlaceHolder ( 6, "6" );
+        expTree.SetStringValueOfPlaceHolder ( 7, "7" );
+        expTree.SetStringValueOfPlaceHolder ( 8, "8" );
+        expTree.SetStringValueOfPlaceHolder ( 9, "9" );
+        expTree.SetStringValueOfPlaceHolder ( 10, "10" );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+        EXPECT_STREQ ( "12345678910X", pExpressionRslt->strResult );
+    }   
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("StrCat3(:$ph1, :$ph2, :$ph3)");
+    EXPECT_TRUE(bRslt);
+    if (bRslt)
+    {
+        expTree.SetStringValueOfPlaceHolder(1, "A");
+        expTree.SetStringValueOfPlaceHolder(2, "B");
+        expTree.SetStringValueOfPlaceHolder(3, "C");        
+        bRslt = expTree.EvaluateExpression();
+        EXPECT_TRUE(bRslt);
+        pExpressionRslt = expTree.GetResult();
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+        EXPECT_STREQ("ABC", pExpressionRslt->strResult);
+    }
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression(":$ph1 + :$ph2");
+    EXPECT_TRUE(bRslt);
+    if (bRslt)
+    {
+        expTree.SetNumberLongValueOfPlaceHolder(1, 10);
+        expTree.SetNumberLongValueOfPlaceHolder(2, 20);
+        bRslt = expTree.EvaluateExpression();
+        EXPECT_TRUE(bRslt);
+        pExpressionRslt = expTree.GetResult();
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(30, pExpressionRslt->nResultLong);
+
+        expTree.SetNumberLongValueOfPlaceHolder(1, 1);
+        expTree.SetNumberLongValueOfPlaceHolder(2, 2);
+        bRslt = expTree.EvaluateExpression();
+        EXPECT_TRUE(bRslt);
+        pExpressionRslt = expTree.GetResult();
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(3, pExpressionRslt->nResultLong);
+    }
+
+    bRslt = expTree.SetInfixExpression(":$ph1 + :$ph2");
+    EXPECT_TRUE(bRslt);
+    if (bRslt)
+    {
+        expTree.SetNumberFloatValueOfPlaceHolder(1, 10.1f);
+        expTree.SetNumberFloatValueOfPlaceHolder(2, 20.2f);
+        bRslt = expTree.EvaluateExpression();
+        EXPECT_TRUE(bRslt);
+        pExpressionRslt = expTree.GetResult();
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+        EXPECT_FLOAT_EQ(30.3f, pExpressionRslt->nResultFloat);
+
+        expTree.SetNumberFloatValueOfPlaceHolder ( 1, 20.1f );
+        expTree.SetNumberFloatValueOfPlaceHolder ( 2, 20.2f );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+        EXPECT_FLOAT_EQ ( 40.3f, pExpressionRslt->nResultFloat );
+    }
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("SumInt(:$ph1, :$ph2)");
+    EXPECT_TRUE(bRslt);
+    if (bRslt)
+    {
+        expTree.SetNumberLongValueOfPlaceHolder(1, 10);
+        expTree.SetNumberLongValueOfPlaceHolder(2, 20);
+        bRslt = expTree.EvaluateExpression();
+        EXPECT_TRUE(bRslt);
+        pExpressionRslt = expTree.GetResult();
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(30, pExpressionRslt->nResultLong);
+    }
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("SumInt(:$ph1, SumInt(:$ph2, :$ph3))");
+    EXPECT_TRUE(bRslt);
+    if (bRslt)
+    {
+        expTree.SetNumberLongValueOfPlaceHolder(1, 10);
+        expTree.SetNumberLongValueOfPlaceHolder(2, 20);
+        expTree.SetNumberLongValueOfPlaceHolder(3, 30);
+        bRslt = expTree.EvaluateExpression();
+        EXPECT_TRUE(bRslt);
+        pExpressionRslt = expTree.GetResult();
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(60, pExpressionRslt->nResultLong);
+
+        expTree.SetNumberLongValueOfPlaceHolder ( 1, 10 );
+        expTree.SetNumberLongValueOfPlaceHolder ( 2, 20 );
+        expTree.SetNumberLongValueOfPlaceHolder ( 3, -30 );
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ ( 0, pExpressionRslt->nResultLong );
+    }
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 TEST(ExpressionTest, CHK)
 {
+    ExpressionTree expTree;
     bool bRslt = false;
-    expression_node* pExpressionRslt;       
+    expression_result* pExpressionRslt;
+   
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "3=1+2 & 'AB' = 'A'+'B' " );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+
 
     cout << "\n---------------------------------------\n";
-    bRslt = expTree.SetInfixExpression("'1' + StrCat3('2','3',StrCat3('4','5',StrCat3('6','7','8')) )='12345678'");
+    bRslt = expTree.SetInfixExpression ( "'1' = '1'" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "1+1" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ ( 2, pExpressionRslt->nResultLong );
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "1+1.0" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_FLOAT_EQ ( 2.0f, pExpressionRslt->nResultFloat );
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "1.0 + 1" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_FLOAT_EQ ( 2.0f, pExpressionRslt->nResultFloat );
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "1.0 + 1.0" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_FLOAT_EQ ( 2.0f, pExpressionRslt->nResultFloat );
+
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "2 <= 1" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    cout << "expTree.EvaluateExpression returns :" << bRslt << "\n";
+    EXPECT_FALSE ( bRslt );
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "1+1+1" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ ( 3, pExpressionRslt->nResultLong );
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("1+1");
     EXPECT_TRUE(bRslt);
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    EXPECT_TRUE(pExpressionRslt->opReslut);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(2, pExpressionRslt->nResultLong);
+       
 
-	cout << "\n---------------------------------------\n";
-	bRslt = expTree.SetInfixExpression("StrCat3('1','2',StrCat3('a','b',StrCat3('X','Y','Z')) )");
-	EXPECT_TRUE(bRslt);
-	bRslt = expTree.EvaluateExpression();
-	EXPECT_TRUE(bRslt);
-	pExpressionRslt = expTree.GetResult();
-	cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-	EXPECT_STREQ("12abXYZ", pExpressionRslt->strVal);
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("StrCat(':', '(' )");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    //EXPECT_EQ(2, expTree.GetDepth());
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ(":(", pExpressionRslt->strResult);
+    
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("StrCat('1',StrCat('a',StrCat('X','Y')) )");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);    
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("1aXY", pExpressionRslt->strResult);
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("StrCat3('1','2',StrCat3('a','b',StrCat3('X','Y','Z')) )");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);    
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("12abXYZ", pExpressionRslt->strResult);
+
 }
+
+#define EPSILON 0.00001
+bool float_compare(float a, float b)
+{
+    return fabs(a - b) < EPSILON; 
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 TEST(ExpressionTest, FLOAT)
 {
-    //ExpressionTree expTree;
+    ExpressionTree expTree;
     bool bRslt = false;
-    expression_node* pExpressionRslt;
+    expression_result* pExpressionRslt;
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "2.0=2" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->bResult << "\n";
+    EXPECT_TRUE ( pExpressionRslt->bResult );
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("1.2+2");
@@ -50,8 +351,9 @@ TEST(ExpressionTest, FLOAT)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nFloatValue << "\n";
-    EXPECT_FLOAT_EQ((float)3.2, pExpressionRslt->variable.nFloatValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_TRUE(float_compare(3.2f, pExpressionRslt->nResultFloat));
+    //EXPECT_DOUBLE_EQ( (float) 3.2, (float) pExpressionRslt->nResultFloat);  
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("1+2.2");
@@ -59,8 +361,9 @@ TEST(ExpressionTest, FLOAT)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nFloatValue << "\n";
-    EXPECT_FLOAT_EQ((float)3.2, pExpressionRslt->variable.nFloatValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_TRUE(float_compare(3.2f, pExpressionRslt->nResultFloat));
+    //EXPECT_DOUBLE_EQ(3.2, pExpressionRslt->nResultFloat);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("1.2+2.2");
@@ -68,8 +371,9 @@ TEST(ExpressionTest, FLOAT)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nFloatValue << "\n";
-    EXPECT_FLOAT_EQ((float)3.4, pExpressionRslt->variable.nFloatValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_TRUE(float_compare(3.4f, pExpressionRslt->nResultFloat));
+    //EXPECT_DOUBLE_EQ(3.4, pExpressionRslt->nResultFloat);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("1+2");
@@ -77,8 +381,8 @@ TEST(ExpressionTest, FLOAT)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
     /////////////
 
@@ -88,8 +392,9 @@ TEST(ExpressionTest, FLOAT)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nFloatValue << "\n";
-    EXPECT_FLOAT_EQ((float)0.2, pExpressionRslt->variable.nFloatValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_TRUE(float_compare(0.2f, pExpressionRslt->nResultFloat));
+    //EXPECT_DOUBLE_EQ(0.2, pExpressionRslt->nResultFloat);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("3-2.2");
@@ -97,8 +402,9 @@ TEST(ExpressionTest, FLOAT)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nFloatValue << "\n";
-    EXPECT_FLOAT_EQ((float)0.8, pExpressionRslt->variable.nFloatValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_TRUE(float_compare(0.8f, pExpressionRslt->nResultFloat));
+    //EXPECT_DOUBLE_EQ(0.8, pExpressionRslt->nResultFloat);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("3.2-2.1");
@@ -106,8 +412,9 @@ TEST(ExpressionTest, FLOAT)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nFloatValue << "\n";
-    EXPECT_FLOAT_EQ((float)1.1, pExpressionRslt->variable.nFloatValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_TRUE(float_compare(1.1f, pExpressionRslt->nResultFloat));
+    //EXPECT_DOUBLE_EQ(1.1, pExpressionRslt->nResultFloat);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("3-2");
@@ -115,8 +422,8 @@ TEST(ExpressionTest, FLOAT)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(1, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(1, pExpressionRslt->nResultLong);
 
 
 }
@@ -124,9 +431,77 @@ TEST(ExpressionTest, FLOAT)
 ///////////////////////////////////////////////////////////////////////////////
 TEST(ExpressionTest, Functions)
 {
-    //ExpressionTree expTree;
+    ExpressionTree expTree;
     bool bRslt = false;
-    expression_node* pExpressionRslt;
+    expression_result* pExpressionRslt;
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression(" StrCat3('A','B', StrCat3('C','D','E'))");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("ABCDE", pExpressionRslt->strResult);
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("'1' + StrCat3('A','B', StrCat3('C','D','E')) = '1ABCDE'");
+    //EXPECT_EQ(5, expTree.GetDepth());    
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+
+    //wrong expression check!!!
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("StrCat3('1',StrCat3('2','3',StrCat3('4','5','6')))");
+    EXPECT_FALSE(bRslt);
+
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("StrCat3('1',StrCat3('2','3',StrCat3('4','5','6')),'7')");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("1234567", pExpressionRslt->strResult);
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("StrCat3('1',StrCat3('2','3',StrCat3('4','5',StrCat3('6','7',StrCat3('8','9','10')))),'X')");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("12345678910X", pExpressionRslt->strResult);
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("SumInt3(1,SumInt3(3,4,SumInt3(5,6,SumInt3(7,8,SumInt(9,10)))),2)");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    pExpressionRslt = expTree.GetResult();
+
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(55, pExpressionRslt->nResultLong);
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("SumInt3(1,2,SumInt3(3,4,SumInt3(5,6,SumInt3(7,8,SumInt(9,10)))))");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(55, pExpressionRslt->nResultLong);
+
+    cout << "\n---------------------------------------\n";
+    bRslt =
+        expTree.SetInfixExpression("SumInt(1, SumInt(2, SumInt(3, SumInt(4, SumInt(5, SumInt(6, SumInt(7,SumInt(8,SumInt(9,10)))))))))");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(55, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("-1.0 / 2.0");
@@ -134,8 +509,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nFloatValue << "\n";
-    EXPECT_EQ(-0.5, pExpressionRslt->variable.nFloatValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultFloat << "\n";
+    EXPECT_EQ(-0.5, pExpressionRslt->nResultFloat);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("-1 + 2");
@@ -143,8 +518,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(1, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(1, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("1+ +2");
@@ -152,8 +527,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrLen( StrCat('AA', 'BB'))");
@@ -161,8 +536,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(4, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(4, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrCat3('1','2','3')");
@@ -170,8 +545,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("123", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("123", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("1+2");
@@ -179,8 +554,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
 
     cout << "\n---------------------------------------\n";
@@ -201,8 +576,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(13, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(13, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt4(1+1, 1+1, 1+1, 1+1)");
@@ -210,8 +585,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(8, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(8, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrCat3('1','2',StrCat3('a','b','c') )");
@@ -219,8 +594,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("12abc", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("12abc", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt4(1+1, 1+1, 1+1, 1+1)");
@@ -228,8 +603,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(8, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(8, pExpressionRslt->nResultLong);
 
 
     cout << "\n---------------------------------------\n";
@@ -238,8 +613,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(21, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(21, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("testBool(10, 'a', 1=1)");
@@ -253,8 +628,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("123", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("123", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt(1+2, 2)");
@@ -262,8 +637,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(5, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(5, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("GetBool('1'='1')");
@@ -295,8 +670,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(100, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(100, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt( SumInt( 1, 1), 2)");
@@ -304,8 +679,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(4, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(4, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt( 1, 2)");
@@ -313,8 +688,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt( (1), (2))");
@@ -322,8 +697,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("(( SumInt(0,1) ))");
@@ -331,8 +706,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(1, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(1, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt( (SumInt(0,1)),SumInt(1,1) )");
@@ -340,8 +715,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrCat('a','b')");
@@ -349,8 +724,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("ab", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("ab", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrCat('a','b')+StrCat('c','d')");
@@ -358,8 +733,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("abcd", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("abcd", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("'abcd'=StrCat('a','b')+StrCat('c','d')");
@@ -392,8 +767,8 @@ TEST(ExpressionTest, Functions)
     {
         bRslt = expTree.EvaluateExpression();
         pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-        EXPECT_EQ(123, pExpressionRslt->variable.nLongValue);
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(123, pExpressionRslt->nResultLong);
     }
 
     cout << "\n---------------------------------------\n";
@@ -403,8 +778,8 @@ TEST(ExpressionTest, Functions)
     {
         bRslt = expTree.EvaluateExpression();
         pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-        EXPECT_EQ(126, pExpressionRslt->variable.nLongValue);
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(126, pExpressionRslt->nResultLong);
     }
 
     cout << "\n---------------------------------------\n";
@@ -452,8 +827,8 @@ TEST(ExpressionTest, Functions)
 
         bRslt = expTree.EvaluateExpression();
         pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-        EXPECT_EQ(5, pExpressionRslt->variable.nLongValue);
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(5, pExpressionRslt->nResultLong);
     }
 
 
@@ -463,8 +838,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(8, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(8, pExpressionRslt->nResultLong);
     // Postfix is:   'AA' 'BB' StrCat StrLen 2 +
 
 
@@ -475,8 +850,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(2, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(2, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrLen( StrCat('AA', 'BB'))");
@@ -484,8 +859,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(4, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(4, pExpressionRslt->nResultLong);
 
 
     cout << "\n---------------------------------------\n";
@@ -494,8 +869,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(4, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(4, pExpressionRslt->nResultLong);
 
 
     cout << "\n---------------------------------------\n";
@@ -504,8 +879,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("123", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("123", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrCat4('1','2', '3','4')");
@@ -513,8 +888,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("1234", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("1234", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrCat('a','b')+StrCat4('1','2', '3','4')");
@@ -522,8 +897,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("ab1234", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("ab1234", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("GetInt100()");
@@ -531,8 +906,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(100, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(100, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("((1+2)*(4-2))+SumInt(1,2)");
@@ -540,8 +915,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(9, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(9, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("AsciiToInt( '1')");
@@ -549,8 +924,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(1, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(1, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("10 - AsciiToInt( StrCat('1','0')+'0')");
@@ -558,8 +933,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(-90, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(-90, pExpressionRslt->nResultLong);
 
 
     cout << "\n---------------------------------------\n";
@@ -568,8 +943,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrLen( 'abs')");
@@ -577,8 +952,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrLen( 'abs 2' )");
@@ -586,8 +961,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(5, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(5, pExpressionRslt->nResultLong);
 
 
     cout << "\n---------------------------------------\n";
@@ -596,8 +971,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(8, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(8, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrLen('a')+StrLen('b')+StrLen('c')+StrLen('d')");
@@ -605,8 +980,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(4, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(4, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("StrLen('aa')+StrLen('bb')*StrLen('ccc')");
@@ -614,8 +989,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(8, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(8, pExpressionRslt->nResultLong);
 
 
 
@@ -663,8 +1038,8 @@ TEST(ExpressionTest, Functions)
     EXPECT_TRUE(bRslt);
     cout << "expTree.EvaluateExpression returns :" << bRslt << "\n";
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(7, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(7, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("7=StrLen('abc')+1+StrLen('efg')");
@@ -679,8 +1054,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(6, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(6, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt( 1, StrLen( StrCat('A', 'B')) )");
@@ -688,8 +1063,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("SumInt( 1, SumInt( 1, StrLen( StrCat('A', 'B')) ))");
@@ -697,8 +1072,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(4, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(4, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("100 - SumInt( 1, SumInt( 1, StrLen( StrCat('A', 'B')) ))");
@@ -706,8 +1081,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(96, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(96, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("100 - AsciiToInt( '100')");
@@ -715,8 +1090,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(0, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(0, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("GetStrSum3(10,'20',30)");
@@ -724,8 +1099,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("60", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("60", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("GetStrSum(10,'20')");
@@ -733,8 +1108,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("30", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("30", pExpressionRslt->strResult);
 
 
     cout << "\n---------------------------------------\n";
@@ -743,8 +1118,8 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-    EXPECT_STREQ("130", pExpressionRslt->strVal);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    EXPECT_STREQ("130", pExpressionRslt->strResult);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("GetStrPlus100(10)");
@@ -752,7 +1127,7 @@ TEST(ExpressionTest, Functions)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
 
 }
 
@@ -760,7 +1135,7 @@ TEST(ExpressionTest, Functions)
 ///////////////////////////////////////////////////////////////////////////////
 TEST(ExpressionTest, Literal)
 {
-    //ExpressionTree expTree;
+    ExpressionTree expTree;
     bool bRslt = false;
 
     cout << "\n---------------------------------------\n";
@@ -823,18 +1198,49 @@ TEST(ExpressionTest, Literal)
 ///////////////////////////////////////////////////////////////////////////////
 TEST(ExpressionTest, Numeric)
 {
-    //ExpressionTree expTree;
-    expression_node* pExpressionRslt;
+    ExpressionTree expTree;
+    expression_result* pExpressionRslt;
     bool bRslt = false;
 
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("100 + GetInt100()");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(200, pExpressionRslt->nResultLong);
+
+    // 54 - (5 - 9) =
+
+    //(1+2)*3-(4-5)*6/7
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("(1+2)*3-(4-5)*7/7");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(10, pExpressionRslt->nResultLong);
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("54 - 5 - 9");
+    EXPECT_TRUE(bRslt);
+    bRslt = expTree.EvaluateExpression();
+    EXPECT_TRUE(bRslt);
+    pExpressionRslt = expTree.GetResult();
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(40, pExpressionRslt->nResultLong);
+    
+    
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("2+1*3/3-1");
     EXPECT_TRUE(bRslt);
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(2, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(2, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("10=9+1");
@@ -856,8 +1262,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(2, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(2, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("10='2'");
@@ -901,12 +1307,7 @@ TEST(ExpressionTest, Numeric)
     cout << "expTree.EvaluateExpression returns :" << bRslt << "\n";
     EXPECT_TRUE(bRslt);
 
-    cout << "\n---------------------------------------\n";
-    bRslt = expTree.SetInfixExpression("2 <= 1");
-    EXPECT_TRUE(bRslt);
-    bRslt = expTree.EvaluateExpression();
-    cout << "expTree.EvaluateExpression returns :" << bRslt << "\n";
-    EXPECT_FALSE(bRslt);
+    
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("1+2+3");
@@ -914,8 +1315,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(6, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(6, pExpressionRslt->nResultLong);
 
 
     cout << "\n---------------------------------------\n";
@@ -924,8 +1325,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(7, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(7, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("(1+2)*3");
@@ -933,8 +1334,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(9, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(9, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("1*2+3");
@@ -942,8 +1343,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(5, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(5, pExpressionRslt->nResultLong);
 
 
     cout << "\n---------------------------------------\n";
@@ -952,8 +1353,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(3, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(3, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("(1+(2-3))*4");
@@ -961,8 +1362,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(0, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(0, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("10+20+30");
@@ -970,8 +1371,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(60, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(60, pExpressionRslt->nResultLong);
 
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("10=20");
@@ -993,8 +1394,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(100, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(100, pExpressionRslt->nResultLong);
 
 
     cout << "\n---------------------------------------\n";
@@ -1003,8 +1404,8 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(101, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(101, pExpressionRslt->nResultLong);
     //EXPECT_GT(2, 0);
 
     cout << "\n---------------------------------------\n";
@@ -1013,16 +1414,16 @@ TEST(ExpressionTest, Numeric)
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-    EXPECT_EQ(210, pExpressionRslt->variable.nLongValue);
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+    EXPECT_EQ(210, pExpressionRslt->nResultLong);
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 TEST(ExpressionTest, negative_positive)
 {
-    // ExpressionTree expTree;
-    expression_node* pExpressionRslt;
+    ExpressionTree expTree;
+    expression_result* pExpressionRslt;
     bool bRslt = false;
 
     cout << "\n---------------------------------------\n";
@@ -1033,8 +1434,8 @@ TEST(ExpressionTest, negative_positive)
         bRslt = expTree.EvaluateExpression();
         EXPECT_TRUE(bRslt);
         pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-        EXPECT_EQ(-2, pExpressionRslt->variable.nLongValue);
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(-2, pExpressionRslt->nResultLong);
     }
 
     cout << "\n---------------------------------------\n";
@@ -1045,8 +1446,8 @@ TEST(ExpressionTest, negative_positive)
         bRslt = expTree.EvaluateExpression();
         EXPECT_TRUE(bRslt);
         pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-        EXPECT_EQ(-2, pExpressionRslt->variable.nLongValue);
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(-2, pExpressionRslt->nResultLong);
     }
 
     cout << "\n---------------------------------------\n";
@@ -1057,8 +1458,8 @@ TEST(ExpressionTest, negative_positive)
         bRslt = expTree.EvaluateExpression();
         EXPECT_TRUE(bRslt);
         pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-        EXPECT_EQ(-2, pExpressionRslt->variable.nLongValue);
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(-2, pExpressionRslt->nResultLong);
     }
 
     cout << "\n---------------------------------------\n";
@@ -1069,8 +1470,8 @@ TEST(ExpressionTest, negative_positive)
         bRslt = expTree.EvaluateExpression();
         EXPECT_TRUE(bRslt);
         pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-        EXPECT_EQ(2, pExpressionRslt->variable.nLongValue);
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(2, pExpressionRslt->nResultLong);
     }
 
     cout << "\n---------------------------------------\n";
@@ -1081,8 +1482,8 @@ TEST(ExpressionTest, negative_positive)
         bRslt = expTree.EvaluateExpression();
         EXPECT_TRUE(bRslt);
         pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-        EXPECT_EQ(2, pExpressionRslt->variable.nLongValue);
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(2, pExpressionRslt->nResultLong);
     }
 
     cout << "\n---------------------------------------\n";
@@ -1093,8 +1494,8 @@ TEST(ExpressionTest, negative_positive)
         bRslt = expTree.EvaluateExpression();
         EXPECT_TRUE(bRslt);
         pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->variable.nLongValue << "\n";
-        EXPECT_EQ(0, pExpressionRslt->variable.nLongValue);
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->nResultLong << "\n";
+        EXPECT_EQ(0, pExpressionRslt->nResultLong);
     }
 
 }
@@ -1102,7 +1503,7 @@ TEST(ExpressionTest, negative_positive)
 ///////////////////////////////////////////////////////////////////////////////
 TEST(ExpressionTest, AND_OR)
 {
-    //ExpressionTree expTree;
+    ExpressionTree expTree;
     //expression_node* pExpressionRslt;
     bool bRslt = false;
 

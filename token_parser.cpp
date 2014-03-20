@@ -1,4 +1,3 @@
-
 #include <string.h>
 #include "token_parser.h"
 #include "user_functions.h"
@@ -62,16 +61,16 @@ bool CTokenParser::GetToken(ItemTokenInfo* pResult)
             if (nLength > 0)
             {                
                 pResult->nType = NODE_NUMBER;                
-                bIsAvailableNegativePositiveNumberNowForThePreviousType = true; ///======= //음수/양수 부호의 숫자 이전 토큰이, 수식계산 가능한지 여부
+                bIsAvailableNegativePositiveNumberNowForThePreviousType = true; 
 
                 if (*strExpression == CHAR_MINUS )
                 {
-                    cout << "GetToken : this is the start of a negative value [" << strExpression << "]" << endl;
+                    //cout << "GetToken : this is the start of a negative value [" << strExpression << "]" << endl;
                     bThisIsNegativeNumber = true;
                 }
                 else
                 {
-                    cout << "GetToken : this is the start of a positive value [" << strExpression << "]" << endl;
+                    //cout << "GetToken : this is the start of a positive value [" << strExpression << "]" << endl;
                     bThisIsPositiveNumber = true;
                 }
                 
@@ -302,11 +301,30 @@ bool CTokenParser::GetToken(ItemTokenInfo* pResult)
                 bIsAvailableNegativePositiveNumberNowForThePreviousType = false;
                 return true;
 
+            case CHAR_COLON: //20130314 placeholder
+                // :$ph1 , $ph2, ...
+                if (0 == strncmp(PLACE_HOLDER_PREFIX, strExpression, strlen(PLACE_HOLDER_PREFIX))) //20140314
+                {
+                    //cout << "this is start of a place holder!: " << strExpression << "\n";
+                    nLength = GetPlaceHolderLength(strExpression);
+                    if (nLength == -1)
+                    {
+                        cout << "Invalid Place holder identifier!!" << endl;
+                        pResult->nType = TKN_ERROR;
+                        nLength = 1;
+                        pResult->nLength = 0;                        
+                        return false;
+                    }                                        
+                    pResult->nType = NODE_PLACE_HOLDER; 
+                    pResult->nDetailedType = PLACE_HOLDER;
+                }                                
+                break;
+
             default:   // incorrect value
                 nLength = 1;
                 pResult->nType = TKN_ERROR;
                 bIsAvailableNegativePositiveNumberNowForThePreviousType = false;
-                cout << "[error]strExpression is " << strExpression << endl;
+                cout << "[error] strExpression is " << strExpression << endl;
                 break;
 
             }// end of switch            
@@ -363,7 +381,7 @@ bool CTokenParser::GetToken(ItemTokenInfo* pResult)
                 {
                     pResult->nDetailedType = NUMBER_FLOAT;
                 }                
-            }            
+            }               
         }
                
         strExpression += nLength;
@@ -376,16 +394,50 @@ bool CTokenParser::GetToken(ItemTokenInfo* pResult)
 	return false;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+int CTokenParser::GetPlaceHolderLength(char *strexp)
+{
+    // :$ph1 , $ph2, ...
+    int nCount = strlen(PLACE_HOLDER_PREFIX) ;
+    char *imsiPtr = strexp  ;
+    imsiPtr += nCount;
+    int MAX_LOOP = 30;
+    for (int i = 0; i<MAX_LOOP; i++)
+    {
+        if (*imsiPtr == 0x00)
+        {
+            if (nCount == strlen(PLACE_HOLDER_PREFIX))
+            {
+                //error!! :$ph only!
+                return -1;
+            }
+            else
+            {
+                return nCount;
+            }
+        }
+        else if ( *imsiPtr >= 0x30 && *imsiPtr <= 0x39 )
+        {
+            imsiPtr++;
+            nCount++;
+        }
+        else
+        {            
+            return nCount;
+        }        
+    }
+
+    return -1;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
-// Token 종류를 구분하기 위해 맨 앞 character를 확인한다
 int CTokenParser::GetTokenType(char chexp)
 {   
 	if (((chexp >= 'A') && (chexp <= 'z')) || chexp == '_' )
 	{
 		return CHAR_LITERAL;
 	}
-    else if ( ((chexp >= 0x30) && (chexp <= 0x39)) || chexp == '.' )
+    else if ( (chexp >= 0x30 && chexp <= 0x39) || chexp == '.' )
 	{
 		return CHAR_NUMBER;
 	}
@@ -492,38 +544,3 @@ int CTokenParser::GetTokenType(char * chexp)
 	return NODE_NUMBER;
 }
 
-
-/* TEST
-if (pResult->nType == NODE_USER_FUNCTIION)
-{
-//set nLength to the last end of the function --> last ')' 함수전체를 얻음
-int nFunctionDepth = 0;
-for (int nCount = 0; nCount < (int)strlen(strExpression); nCount++)
-{
-if (strExpression[nCount] == CHAR_LEFT_PARENTHESIS)
-{
-nFunctionDepth++;
-}
-else if (strExpression[nCount] == CHAR_RIGHT_PARENTHESIS)
-{
-nFunctionDepth--;
-if (nFunctionDepth == 0)
-{
-nLength = nCount + 1;
-strncpy(pResult->strValue, strExpression, nLength);
-pResult->nLength = nLength;
-strExpression += nLength;
-break;
-}
-}
-}// end of for
-
-if (nFunctionDepth != 0)
-{
-cout << "[error] strExpression : Wrong usage of user function " << strExpression << endl;
-pResult->nLength = 0;
-return false;
-}
-}
-else
-*/

@@ -2,36 +2,46 @@
 #define	_EXPRESSION_TREE_H_
 
 
-
 #include<iostream>
 #include<stack>
 #include<vector>
 #include <string>
+#include <memory.h>
 using namespace std;
 
-#include <memory.h>
 #include "token_parser.h"
 #include "user_functions.h"
 
 #include "expression_tree_common.h"
 
+#define MAX_PLACE_HOLDER 50
 
 ///////////////////////////////////////////////////////////////////////////////
 class ExpressionTree
 {
 public:
     ExpressionTree();
-    ~ExpressionTree();
+    virtual ~ExpressionTree();
     
     bool SetInfixExpression(const char* inFix);
     bool EvaluateExpression();    
-    expression_node* GetResult();
-    int GetDepth();
+    expression_result* GetResult();
+    //int GetDepth() { return nDepthOfTree; };
+    int GetDepth();    
+    
+    bool SetNumberLongValueOfPlaceHolder(int nPos, long nVal);   //using placeholder 20140314    
+    bool SetNumberFloatValueOfPlaceHolder(int nPos, float nVal);   //using placeholder 20140314
+    bool SetStringValueOfPlaceHolder(int nPos, const char* nStrVal); //using placeholder 20140314
             
-protected:
-    int nDepthOfTree;
+protected:    
+    PlaceHolderValue placeHolderArray [ MAX_PLACE_HOLDER ];
+    
+    int nPlaceHolderDataType; //20140314
+
+    int GetDepth(expression_node* root);
+    int  nDepthOfTree;
     int  memStatus;
-    int GetDepth( expression_node* root );
+    void SetDepth();
     bool IsOperator(ItemTokenInfo* pNodeInfo);
     bool IsOperand(ItemTokenInfo* pNodeInfo);
     bool IsUserFunction(ItemTokenInfo* pNodeInfo);
@@ -53,6 +63,10 @@ protected:
     void EvaluateStringCondition(expression_node *root,
         expression_node* pRsltLeft,
         expression_node* pRsltRight );
+
+    void EvaluateBoolCondition ( expression_node *root,
+                                    expression_node* pRsltLeft,
+                                    expression_node* pRsltRight );
         
     void EvaluateConditionNonRecursive(expression_node *root);
         
@@ -61,7 +75,8 @@ protected:
         expression_node* pRsltRight);
 
     stack<expression_node*> treeNodeMemRepository;
-        
+    
+    bool SetRealPlaceHolderValue(expression_node *root);
 };
 
 #endif

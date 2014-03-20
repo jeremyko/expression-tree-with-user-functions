@@ -26,10 +26,10 @@ private:
     char*   StrCat3(char* str1, char* str2, char* str3);
     char*   StrCat4(char* str1, char* str2, char* str3, char* str4);
     int     GetInt100() {  return 100;  };
-    char*   GetStrPlus100(long nCnt);
-    char*   GetStrSumAndPlus100(long nVal1, long nVal2);
-    char*   GetStrSum(long nVal1, char* szVal2);
-    char*   GetStrSum3(long nVal1, char* szVal2, long nVal3);
+    char*   GetStrPlus100(int nCnt);
+    char*   GetStrSumAndPlus100(int nVal1, int nVal2);
+    char*   GetStrSum(int nVal1, char* szVal2);
+    char*   GetStrSum3(int nVal1, char* szVal2, int nVal3);
     bool    testBool(int nVal1, char* szVal2, bool boolFlag);
     bool    testBool2(int nVal, bool boolFlag);
     //functions for test ----------------
