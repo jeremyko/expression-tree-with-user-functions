@@ -9,7 +9,6 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
     expression_node* pExpressionRslt;
     bool bRslt = false;
 
-    cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("1 * -2 ");
     EXPECT_TRUE(bRslt);
     if (bRslt)
@@ -23,7 +22,7 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
     }
 ##custom user functions 
     //see user_functions.h, user_functions.cpp
-    cout << "\n---------------------------------------\n";
+    //-----------------------------------------------------
     bRslt = expTree.SetInfixExpression("SumInt4(SumInt4(1,1+1,1+1,2), 1+1, 1+1, 1+1)");
     EXPECT_TRUE(bRslt);
     bRslt = expTree.EvaluateExpression();
@@ -33,19 +32,19 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
          << pExpressionRslt->variable.nLongValue << "\n";
     EXPECT_EQ(13, pExpressionRslt->variable.nLongValue);
    
-    cout << "\n---------------------------------------\n";
+    //-----------------------------------------------------
     bRslt = expTree.SetInfixExpression("GetBool('1'='1')");
     EXPECT_TRUE(bRslt);
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
    
-    cout << "\n---------------------------------------\n";
+    //-----------------------------------------------------
     bRslt = expTree.SetInfixExpression("StrCat('ab','cd')=StrCat('a','b')+StrCat('c','d') ");
     EXPECT_TRUE(bRslt);
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
    
-    cout << "\n---------------------------------------\n";
+    //-----------------------------------------------------
     bRslt = expTree.SetInfixExpression("StrCat3('1','2',StrCat3('a','b',StrCat3('X','Y','Z')) )");
     EXPECT_TRUE(bRslt);
     bRslt = expTree.EvaluateExpression();
@@ -56,13 +55,13 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
     EXPECT_STREQ("12abXYZ", pExpressionRslt->strVal);
 
 ##using placeholder 
+    // placeholder identifier is :$ph1, :$ph2, .... :$ph50 (max)
     bRslt = expTree.SetInfixExpression ( ":$ph1+:$ph2" );
     EXPECT_TRUE ( bRslt );
     if ( bRslt )
     {
         expTree.SetNumberLongValueOfPlaceHolder ( 1, 1 );
         expTree.SetNumberLongValueOfPlaceHolder ( 2, 2 );
-
         bRslt = expTree.EvaluateExpression ( );
         EXPECT_TRUE ( bRslt );
         pExpressionRslt = expTree.GetResult ( );
