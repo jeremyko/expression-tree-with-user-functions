@@ -25,41 +25,17 @@ TEST(ExpressionTest, CHK)
     EXPECT_TRUE(bRslt);
     bRslt = expTree.EvaluateExpression();
     EXPECT_TRUE(bRslt);
-    EXPECT_EQ (6, expTree.GetDepth() );
-
     pExpressionRslt = expTree.GetResult();
-    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
+    EXPECT_TRUE(pExpressionRslt->opReslut);
 
-    EXPECT_STREQ("12ab!?X", pExpressionRslt->strVal);
-    {
-        ExpressionTree expTree;
-        bool bRslt = false;
-        expression_node* pExpressionRslt;
-
-        cout << "\n---------------------------------------\n";
-        bRslt = expTree.SetInfixExpression("StrCat('1',StrCat('a',StrCat('X','Y')) )");
-        EXPECT_TRUE(bRslt);
-        bRslt = expTree.EvaluateExpression();
-        EXPECT_TRUE(bRslt);
-        pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-        EXPECT_STREQ("1aXY", pExpressionRslt->strVal);
-    }
-
-    {
-        ExpressionTree expTree;
-        bool bRslt = false;
-        expression_node* pExpressionRslt;
-
-        cout << "\n---------------------------------------\n";
-        bRslt = expTree.SetInfixExpression("StrCat3('1','2',StrCat3('a','b',StrCat3('X','Y','Z')) )");
-        EXPECT_TRUE(bRslt);
-        bRslt = expTree.EvaluateExpression();
-        EXPECT_TRUE(bRslt);
-        pExpressionRslt = expTree.GetResult();
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-        EXPECT_STREQ("12abXYZ", pExpressionRslt->strVal);
-    }               
+	cout << "\n---------------------------------------\n";
+	bRslt = expTree.SetInfixExpression("StrCat3('1','2',StrCat3('a','b',StrCat3('X','Y','Z')) )");
+	EXPECT_TRUE(bRslt);
+	bRslt = expTree.EvaluateExpression();
+	EXPECT_TRUE(bRslt);
+	pExpressionRslt = expTree.GetResult();
+	cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
+	EXPECT_STREQ("12abXYZ", pExpressionRslt->strVal);
 }
 ///////////////////////////////////////////////////////////////////////////////
 TEST(ExpressionTest, FLOAT)
