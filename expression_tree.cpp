@@ -11,6 +11,7 @@ const char* NodeTypeDesc[] = {
     "NODE_CALCULATE_OPERATOR",
     "NODE_DELIMITER",
     "NODE_USER_FUNCTIION",
+    "NODE_PLACE_HOLDER", 
     "NODE_EMPTY"
 };
 
@@ -32,7 +33,11 @@ const char* DetailedTypeDesc[] = {
     "PAUSE",
     "USER_FUNCTIION",
     "LITERAL",        
-    "NUMBER"
+    "NUMBER_INT", 
+    "NUMBER_LONG",  
+    "NUMBER_FLOAT", 
+    "BOOL_TYPE",   
+    "PLACE_HOLDER" 
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,7 +68,7 @@ type_struct_OpPriority OpPriorityTable[MAX_OP_PRIORITY_TABLE_CNT] =
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-ExpressionTree::ExpressionTree() //:vecPlaceHolderValues(100)//20140314 
+ExpressionTree::ExpressionTree() 
 {
     memStatus = 0;
     root_node = NULL;        
@@ -417,15 +422,6 @@ void ExpressionTree::EvaluateBoolCondition (
     root->expressionResult.nResultDetailedType = BOOL_TYPE;
 }
 
-#define CASE_L_LONG    8
-#define CASE_L_FLOAT   4
-#define CASE_R_LONG    2
-#define CASE_R_FLOAT   1
-
-#define CASE_L_LONG_R_LONG    10
-#define CASE_L_LONG_R_FLOAT   9
-#define CASE_L_FLOAT_R_LONG   6
-#define CASE_L_FLOAT_R_FLOAT  5
 
 ///////////////////////////////////////////////////////////////////////////////
 void ExpressionTree::EvaluateNumericCondition(  
@@ -1039,7 +1035,6 @@ bool ExpressionTree::SetNumberLongValueOfPlaceHolder(int nPos, long nVal)   //us
 ///////////////////////////////////////////////////////////////////////////////
 bool ExpressionTree::SetStringValueOfPlaceHolder(int nPos, const char* strVal) //using placeholder
 {
-    //TODO : use static array --> PlaceHolderValue placeHolderarray[50];
     if ( nPos - 1 >= MAX_PLACE_HOLDER  )
     {
         return false;

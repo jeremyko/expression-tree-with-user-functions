@@ -24,23 +24,17 @@ enum EnumErrorTokenType
 enum EnumNodeType
 {
     NODE_UNKNOWN = 0,             
-    NODE_LITERAL,            //1 String Value: ' or A-z or . or _
+    NODE_LITERAL,            //1 ' or A-z or . or _
     NODE_NUMBER,             //2 Integer Value        
     NODE_BOOL,               //3 
     NODE_COMPARE_OPERATOR,   //4 Operator  =, <, >, !, &, | 		
     NODE_CALCULATE_OPERATOR, //5 Operator  +, -, *, /	
-    NODE_DELIMITER,          //6 Delimiter (, ), ,(a pause)		        
+    NODE_DELIMITER,          //6 Delimiter (, ), ,		        
     NODE_USER_FUNCTIION,     //7 functions in CUserFunctions
     NODE_PLACE_HOLDER,       //8 20140314 : 
-    NODE_EMPTY ,             //9 empty args  --> 인자수 하나인 함수의 경우 child 트리 node 2개 조건을 만족하게 하기 위해 빈 노드를 가진다 XXX -> TODO 개선..
+    NODE_EMPTY ,             //9 empty args  
     MAX_NODE_TYPE
 };
-
-//TKN_END,               // 식이 끝났음
-//TKN_QUESTION ,
-//TKN_COLON ,   
-//PAUSE,                  // ,
-//TKN_NULL,
 
 enum EnumNodeDetailedType
 {    
@@ -99,8 +93,7 @@ const char CHAR_COLON               = ':';
 const char CHAR_QUESTION            = '?';
 const char CHAR_PERCENT             = '%';
 const char CHAR_DOLLAR              = '$';
-//const char CHAR_PAUSE               = ',';
-const char CHAR_COMMA = ',';
+const char CHAR_COMMA               = ',';
 
 // :$ph1, :$ph2, :$ph3...
 #define PLACE_HOLDER_PREFIX  ":$ph" //using placeholder 20140314

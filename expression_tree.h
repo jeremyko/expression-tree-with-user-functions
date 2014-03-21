@@ -11,10 +11,8 @@ using namespace std;
 
 #include "token_parser.h"
 #include "user_functions.h"
-
 #include "expression_tree_common.h"
 
-#define MAX_PLACE_HOLDER 50
 
 ///////////////////////////////////////////////////////////////////////////////
 class ExpressionTree
@@ -26,7 +24,6 @@ public:
     bool SetInfixExpression(const char* inFix);
     bool EvaluateExpression();    
     expression_result* GetResult();
-    //int GetDepth() { return nDepthOfTree; };
     int GetDepth();    
     
     bool SetNumberLongValueOfPlaceHolder(int nPos, long nVal);   //using placeholder 20140314    
@@ -35,13 +32,10 @@ public:
             
 protected:    
     PlaceHolderValue placeHolderArray [ MAX_PLACE_HOLDER ];
-    
-    int nPlaceHolderDataType; //20140314
 
     int GetDepth(expression_node* root);
     int  nDepthOfTree;
     int  memStatus;
-    void SetDepth();
     bool IsOperator(ItemTokenInfo* pNodeInfo);
     bool IsOperand(ItemTokenInfo* pNodeInfo);
     bool IsUserFunction(ItemTokenInfo* pNodeInfo);
@@ -57,22 +51,22 @@ protected:
     CUserFunctions userFuncs;
                 
     void EvaluateNumericCondition(expression_node *root,
-        expression_node* pRsltLeft,
-        expression_node* pRsltRight );
+                                  expression_node* pRsltLeft,
+                                  expression_node* pRsltRight );
 
     void EvaluateStringCondition(expression_node *root,
-        expression_node* pRsltLeft,
-        expression_node* pRsltRight );
+                                 expression_node* pRsltLeft,
+                                 expression_node* pRsltRight );
 
     void EvaluateBoolCondition ( expression_node *root,
-                                    expression_node* pRsltLeft,
-                                    expression_node* pRsltRight );
+                                 expression_node* pRsltLeft,
+                                 expression_node* pRsltRight );
         
     void EvaluateConditionNonRecursive(expression_node *root);
         
     void EvaluateLogic(expression_node *root, 
-        expression_node* pRsltLeft, 
-        expression_node* pRsltRight);
+                       expression_node* pRsltLeft, 
+                       expression_node* pRsltRight);
 
     stack<expression_node*> treeNodeMemRepository;
     

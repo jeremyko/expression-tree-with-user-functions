@@ -8,6 +8,18 @@
 
 using namespace std;
 
+#define MAX_PLACE_HOLDER 50
+
+#define CASE_L_LONG      8
+#define CASE_L_FLOAT     4
+#define CASE_R_LONG      2
+#define CASE_R_FLOAT     1
+
+#define CASE_L_LONG_R_LONG    10
+#define CASE_L_LONG_R_FLOAT   9
+#define CASE_L_FLOAT_R_LONG   6
+#define CASE_L_FLOAT_R_FLOAT  5
+
 enum EnumFuncReturnType
 {
     FUNC_RTN_NUM = 1,
@@ -16,18 +28,17 @@ enum EnumFuncReturnType
     MAX_FUNC_RTN_TYPE
 };
 
-enum EnumFuncNumReturnDetailedType
+enum EnumFuncReturnDetailedType
 {
     /*
-    NUMBER_INT,            //17
     NUMBER_LONG,           //18
     NUMBER_FLOAT,          //19
     */
 
-    //FUNC_RTN_DETAILED_INT = 17, // XXX token_parser.h 와 동일해야하는 문제
-    FUNC_RTN_DETAILED_LONG = 18,
+    FUNC_RTN_DETAILED_LONG = 18, //XXX token_parser.h
     FUNC_RTN_DETAILED_FLOAT,
-    FUNC_RTN_DETAILED_STR,
+
+    FUNC_RTN_DETAILED_STR, //TODO : this is useless..
     FUNC_RTN_DETAILED_BOOL,
     MAX_FUNC_RTN_DETAILED_TYPE
 };
@@ -93,8 +104,8 @@ public:
         memset(stringVal, 0x00, sizeof(stringVal));
     }
 protected:
-    int     nPlaceHolderDataType; //NODE_NUMBER, NODE_LITERAL    
-    int     nPlaceHolderDetailedDataType; // NUMBER_INT, NUMBER_LONG, NUMBER_FLOAT  
+    int     nPlaceHolderDataType; 
+    int     nPlaceHolderDetailedDataType; 
     long    nLongValue;
     float   nFloatValue;
     char    stringVal[1024];
