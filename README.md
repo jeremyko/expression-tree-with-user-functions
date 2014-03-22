@@ -7,7 +7,7 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
 ##general arithmetic
 ```cpp
 ExpressionTree expTree;
-expression_node* pExpressionRslt;
+expression_result* pExpressionRslt;
 bool bRslt = false;
 
 bRslt = expTree.SetInfixExpression("1 * -2 ");
