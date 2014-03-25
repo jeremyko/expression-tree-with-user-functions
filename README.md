@@ -18,8 +18,8 @@ if (bRslt)
    EXPECT_TRUE(bRslt);
    pExpressionRslt = expTree.GetResult();
    cout << "expTree.EvaluateExpression returns :" 
-        << pExpressionRslt->variable.nLongValue << "\n";
-   EXPECT_EQ(-2, pExpressionRslt->variable.nLongValue);
+        << pExpressionRslt->nResultLong << "\n";
+   EXPECT_EQ(-2, pExpressionRslt->nResultLong);
 }
 ```
 ##custom user functions
@@ -32,8 +32,8 @@ bRslt = expTree.EvaluateExpression();
 EXPECT_TRUE(bRslt);
 pExpressionRslt = expTree.GetResult();
 cout << "expTree.EvaluateExpression returns :" 
-     << pExpressionRslt->variable.nLongValue << "\n";
-EXPECT_EQ(13, pExpressionRslt->variable.nLongValue);
+     << pExpressionRslt->nResultLong << "\n";
+EXPECT_EQ(13, pExpressionRslt->nResultLong);
    
 //-----------------------------------------------------
 bRslt = expTree.SetInfixExpression("GetBool('1'='1')");
@@ -54,8 +54,8 @@ bRslt = expTree.EvaluateExpression();
 EXPECT_TRUE(bRslt);
 EXPECT_EQ(4, expTree.GetDepth());
 pExpressionRslt = expTree.GetResult();
-cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strVal << "\n";
-EXPECT_STREQ("12abXYZ", pExpressionRslt->strVal);
+cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+EXPECT_STREQ("12abXYZ", pExpressionRslt->strResult);
 ```
 
 ##using placeholder
