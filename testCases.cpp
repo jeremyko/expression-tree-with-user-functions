@@ -218,6 +218,43 @@ TEST(ExpressionTest, CHK)
     expression_result* pExpressionRslt;
    
     cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "'%678%'='12345678A'" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->bResult << "\n";
+    EXPECT_TRUE ( pExpressionRslt->bResult );
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "'12345678A'='%678%'" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->bResult << "\n";
+    EXPECT_TRUE ( pExpressionRslt->bResult );
+    
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "'%678'='12345678'" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->bResult << "\n";
+    EXPECT_TRUE ( pExpressionRslt->bResult );
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression ( "'12345678'='%678'" );
+    EXPECT_TRUE ( bRslt );
+    bRslt = expTree.EvaluateExpression ( );
+    EXPECT_TRUE ( bRslt );
+    pExpressionRslt = expTree.GetResult ( );
+    cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->bResult << "\n";
+    EXPECT_TRUE ( pExpressionRslt->bResult );
+
+
+    cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression ( "3=1+2 & 'AB' = 'A'+'B' " );
     EXPECT_TRUE ( bRslt );
     bRslt = expTree.EvaluateExpression ( );

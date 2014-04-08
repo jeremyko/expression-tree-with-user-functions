@@ -339,10 +339,71 @@ void ExpressionTree::EvaluateStringCondition(
         strcat ( root->expressionResult.strResult, pRsltRight->expressionResult.strResult );
         break;
     case COMPARE_EQUALS:
-        if ( strcmp ( pRsltLeft->expressionResult.strResult, pRsltRight->expressionResult.strResult ) == 0 )
+	    //-------------------------------------------------------------
+        // 20140408 : % 
+        if ( pRsltLeft->expressionResult.strResult [ 0 ] != CHAR_PERCENT &&
+             pRsltLeft->expressionResult.strResult [ strlen ( pRsltLeft->expressionResult.strResult ) - 1 ] != CHAR_PERCENT  &&
+             pRsltRight->expressionResult.strResult [ 0 ] != CHAR_PERCENT &&
+             pRsltRight->expressionResult.strResult [ strlen ( pRsltRight->expressionResult.strResult ) - 1 ] != CHAR_PERCENT
+             )
         {
-            root->expressionResult.bResult = true;
+            if ( strcmp ( pRsltLeft->expressionResult.strResult, pRsltRight->expressionResult.strResult ) == 0 )  //20140408
+            {
+                root->expressionResult.bResult = true;
+            }
+        }
+        else            
+        {
+            if ( pRsltLeft->expressionResult.strResult [ 0 ] == CHAR_PERCENT && 
+                 pRsltLeft->expressionResult.strResult [ strlen ( pRsltLeft->expressionResult.strResult ) -1 ] != CHAR_PERCENT )
+            {
+                // '%99'='AA99'
+                char* pTemp = strstr ( pRsltRight->expressionResult.strResult, &pRsltLeft->expressionResult.strResult [ 1 ] );
+                if ( pTemp != 0x00 && ! strcmp ( &pRsltLeft->expressionResult.strResult [ 1 ], pTemp ) )
+                {
+                    root->expressionResult.bResult = true;
+                }
+            }
+            else if ( pRsltLeft->expressionResult.strResult [ 0 ] == CHAR_PERCENT &&
+                      pRsltLeft->expressionResult.strResult [ strlen ( pRsltLeft->expressionResult.strResult ) - 1 ] == CHAR_PERCENT )
+            {
+                // '%678%'='12345678A'
+                char szTemp [ 1024 ];
+                memset ( &szTemp, 0x00, sizeof( szTemp ) );
+                strncpy ( szTemp, &pRsltLeft->expressionResult.strResult[1], strlen ( pRsltLeft->expressionResult.strResult ) - 2 );
+                char* pTemp = strstr ( pRsltRight->expressionResult.strResult, szTemp );
+
+                if ( pTemp != 0x00  )
+                {
+                    root->expressionResult.bResult = true;
+                }                
+            }
+            else if ( pRsltRight->expressionResult.strResult [ 0 ] == CHAR_PERCENT &&
+                      pRsltRight->expressionResult.strResult [ strlen ( pRsltRight->expressionResult.strResult ) - 1 ] != CHAR_PERCENT )
+            {
+                // 'AA99' = '%99'                
+                char* pTemp = strstr ( pRsltLeft->expressionResult.strResult, &pRsltRight->expressionResult.strResult [ 1 ] );
+                if ( pTemp != 0x00 && !strcmp ( &pRsltRight->expressionResult.strResult [ 1 ], pTemp ) )
+                {
+                    root->expressionResult.bResult = true;
+                }
+            }
+            else if ( pRsltRight->expressionResult.strResult [ 0 ] == CHAR_PERCENT &&
+                      pRsltRight->expressionResult.strResult [ strlen ( pRsltRight->expressionResult.strResult ) - 1 ] == CHAR_PERCENT )
+            {
+                // '12345678A' = '%678%'
+                char szTemp [ 1024 ];
+                memset ( &szTemp, 0x00, sizeof( szTemp ) );
+                strncpy ( szTemp, &pRsltRight->expressionResult.strResult [ 1 ], strlen ( pRsltRight->expressionResult.strResult ) - 2 );
+                char* pTemp = strstr ( pRsltLeft->expressionResult.strResult, szTemp );
+
+                if ( pTemp != 0x00 )
+                {
+                    root->expressionResult.bResult = true;
+                }
+            }
         }        
+        //-------------------------------------------------------------  
         break;
 
     case COMPARE_NOT_EQUALS:
