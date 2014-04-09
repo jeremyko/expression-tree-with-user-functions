@@ -338,7 +338,12 @@ void ExpressionTree::EvaluateStringCondition(
         strcat(root->expressionResult.strResult , pRsltLeft->expressionResult.strResult);
         strcat ( root->expressionResult.strResult, pRsltRight->expressionResult.strResult );
         break;
-    case COMPARE_EQUALS:
+	case COMPARE_EQUALS:
+		if ( strcmp ( pRsltLeft->expressionResult.strResult, pRsltRight->expressionResult.strResult ) == 0 )  //20140408
+		{
+			root->expressionResult.bResult = true;
+		}
+	    /*
 	    //-------------------------------------------------------------
         // 20140408 : % 
         if ( pRsltLeft->expressionResult.strResult [ 0 ] != CHAR_PERCENT &&
@@ -403,7 +408,8 @@ void ExpressionTree::EvaluateStringCondition(
                 }
             }
         }        
-        //-------------------------------------------------------------  
+        //-------------------------------------------------------------
+		*/
         break;
 
     case COMPARE_NOT_EQUALS:
