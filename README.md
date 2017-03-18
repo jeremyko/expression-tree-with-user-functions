@@ -1,10 +1,10 @@
-#c++ expression tree library
+# c++ expression tree library
 
 http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
 
 #Usage 
 
-##general arithmetic
+## general arithmetic
 ```cpp
 ExpressionTree expTree;
 expression_result* pExpressionRslt;
@@ -22,7 +22,7 @@ if (bRslt)
    EXPECT_EQ(-2, pExpressionRslt->nResultLong);
 }
 ```
-##custom user functions
+## custom user functions
 ```cpp
 //see user_functions.h, user_functions.cpp
 //-----------------------------------------------------
@@ -58,7 +58,7 @@ cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << 
 EXPECT_STREQ("12abXYZ", pExpressionRslt->strResult);
 ```
 
-##using placeholder
+## using placeholder
 ```cpp
 // placeholder identifier is :$ph1, :$ph2, .... :$ph50 (max)
 bRslt = expTree.SetInfixExpression ( ":$ph1+:$ph2" );
@@ -94,6 +94,6 @@ if ( bRslt )
 }
 ```
 
-#LICENSE
+# LICENSE
 
 This projected is licensed under the terms of the BSD license.
