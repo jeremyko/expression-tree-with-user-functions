@@ -93,7 +93,3 @@ if ( bRslt )
     EXPECT_STREQ ( "AB", pExpressionRslt->strResult );
 }
 ```
-
-# LICENSE
-
-This projected is licensed under the terms of the BSD license.
