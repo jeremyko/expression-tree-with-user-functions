@@ -122,7 +122,8 @@ public:
 
     void SetStringData(const char* strData)
     {
-        strncpy(stringVal, strData, sizeof(stringVal));
+        //snprintf(stringVal, sizeof(stringVal),  "'%s'",strData);
+        snprintf(stringVal, sizeof(stringVal),  "%s",strData);
     }
 
     char* GetStringData()

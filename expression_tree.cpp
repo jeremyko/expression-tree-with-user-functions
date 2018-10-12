@@ -330,6 +330,7 @@ void ExpressionTree::EvaluateStringCondition(
     expression_node* pRsltLeft,
     expression_node* pRsltRight    )
 {
+    //cout << "(" <<__func__<<":"<<__LINE__ << ") debug" << "\n"; //debug
     root->expressionResult.bResult = false;
 
     switch (root->nDetailedType)
@@ -497,6 +498,7 @@ void ExpressionTree::EvaluateNumericCondition(
     expression_node* pRsltRight  )
 {       
             
+    cout << "(" <<__func__<<":"<<__LINE__ << ") debug" << "\n"; //debug
     int  nCase = 0;
     long  nLongLeft = 0;
     long  nLongRight = 0;

@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "expression_tree.h"
 #include "user_functions.h"
 #include <math.h>
@@ -217,6 +217,7 @@ TEST(ExpressionTest, CHK)
     bool bRslt = false;
     expression_result* pExpressionRslt;
    
+/*
     cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression ( "'%678%'='12345678A'" );
     EXPECT_TRUE ( bRslt );
@@ -252,6 +253,7 @@ TEST(ExpressionTest, CHK)
     pExpressionRslt = expTree.GetResult ( );
     cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->bResult << "\n";
     EXPECT_TRUE ( pExpressionRslt->bResult );
+    */
 
 
     cout << "\n---------------------------------------\n";
@@ -1624,3 +1626,30 @@ TEST(ExpressionTest, AND_OR)
         EXPECT_TRUE(bRslt);
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+TEST(ExpressionTest, TEST_RULE)
+{
+    ExpressionTree expTree;
+    bool bRslt = false;
+    expression_result * pExpressionRslt;
+
+    cout << "\n---------------------------------------\n";
+    bRslt = expTree.SetInfixExpression("(:$ph1 = '01071786907' | :$ph2 = '1071786907') & :$ph3 = '127.0.0.1' & SumInt(:$ph4, :$ph5) != 100");
+    EXPECT_TRUE(bRslt);
+
+    if ( bRslt )
+    {
+        expTree.SetStringValueOfPlaceHolder ( 1, "'01071786907'" );//XXX TODO remove ' '
+        expTree.SetStringValueOfPlaceHolder ( 2, "'1071786907X'" );
+        expTree.SetStringValueOfPlaceHolder ( 3, "'127.0.0.1'" );
+        expTree.SetNumberLongValueOfPlaceHolder ( 4, 79 );
+        expTree.SetNumberLongValueOfPlaceHolder ( 5, 20 );
+
+        bRslt = expTree.EvaluateExpression ( );
+        EXPECT_TRUE ( bRslt );
+        pExpressionRslt = expTree.GetResult ( );
+        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
+    }   
+}
+

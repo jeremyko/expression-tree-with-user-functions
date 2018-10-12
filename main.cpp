@@ -1,6 +1,6 @@
 
 #include<iostream>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 using namespace std;
 
@@ -15,9 +15,11 @@ int main(int argc, char* argv[])
     //::testing::GTEST_FLAG(filter) = "ExpressionTest.Literal";
     //::testing::GTEST_FLAG(filter) = "ExpressionTest.Numeric";
         
-    ::testing::GTEST_FLAG(filter) = "ExpressionTest.*";
+    //::testing::GTEST_FLAG(filter) = "ExpressionTest.*";
+    //::testing::GTEST_FLAG(filter) = "ExpressionTest.TEST_RULE";
+    //::testing::GTEST_FLAG(filter) = "ExpressionTest.PlaceHolderTest";
     
-    testing::InitGoogleTest(&argc, argv);   
+    ::testing::InitGoogleTest(&argc, argv);   
     return RUN_ALL_TESTS(); 
 }
 
