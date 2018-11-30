@@ -498,7 +498,7 @@ void ExpressionTree::EvaluateNumericCondition(
     expression_node* pRsltRight  )
 {       
             
-    cout << "(" <<__func__<<":"<<__LINE__ << ") debug" << "\n"; //debug
+    //cout << "(" <<__func__<<":"<<__LINE__ << ") debug" << "\n"; //debug
     int  nCase = 0;
     long  nLongLeft = 0;
     long  nLongRight = 0;
