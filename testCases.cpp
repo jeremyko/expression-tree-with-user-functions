@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "expression_tree.h"
 #include "user_functions.h"
+#include "elapsed_time.hpp"
 #include <math.h>
 
 
@@ -1632,14 +1633,14 @@ TEST(ExpressionTest, TEST_RULE)
 {
     ExpressionTree expTree;
     bool bRslt = false;
-    expression_result * pExpressionRslt;
 
-    cout << "\n---------------------------------------\n";
     bRslt = expTree.SetInfixExpression("(:$ph1 = '01071786907' | :$ph2 = '1071786907') & :$ph3 = '127.0.0.1' & SumInt(:$ph4, :$ph5) != 100");
     EXPECT_TRUE(bRslt);
 
+    ElapsedTime elapsed;
     if ( bRslt )
     {
+        elapsed.SetStartTime();
         expTree.SetStringValueOfPlaceHolder ( 1, "'01071786907'" );//XXX TODO remove ' '
         expTree.SetStringValueOfPlaceHolder ( 2, "'1071786907X'" );
         expTree.SetStringValueOfPlaceHolder ( 3, "'127.0.0.1'" );
@@ -1647,9 +1648,8 @@ TEST(ExpressionTest, TEST_RULE)
         expTree.SetNumberLongValueOfPlaceHolder ( 5, 20 );
 
         bRslt = expTree.EvaluateExpression ( );
+
         EXPECT_TRUE ( bRslt );
-        pExpressionRslt = expTree.GetResult ( );
-        cout << "expTree.EvaluateExpression returns :" << pExpressionRslt->strResult << "\n";
     }   
 }
 

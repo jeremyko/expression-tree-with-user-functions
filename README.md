@@ -4,6 +4,14 @@ http://jeremyko.blogspot.kr/2014/03/c-expression-tree.html
 
 # Usage 
 
+## compile
+```
+mkdir build
+cd build
+cmake ..
+make 
+```
+
 ## general arithmetic
 ```cpp
 ExpressionTree expTree;

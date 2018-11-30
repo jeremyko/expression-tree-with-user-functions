@@ -1,2 +1,5 @@
 expression_test
 *.swp
+*.out
+*.png
+build

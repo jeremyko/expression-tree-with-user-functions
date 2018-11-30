@@ -1,2 +1,0 @@
-rm -f *.o
-g++ -lpthread -std=c++11 -Wall -o expression_test main.cpp token_parser.cpp user_functions.cpp expression_tree.cpp testCases.cpp /usr/local/lib64/libgtest.a /usr/local/lib64/libgtest_main.a
